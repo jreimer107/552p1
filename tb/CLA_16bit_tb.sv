@@ -9,6 +9,8 @@ module CLA_16bit_tb();
   wire [15:0] S_t;
   assign {cout_t, S_t} = A + B + cin;
 
+  CLA_16bit DUT(.A(A), .B(B), .cin(cin), .cout(cout), .S(S));
+
   initial begin
     A = 16'h0000;
     B = 16'h0000;
@@ -17,12 +19,14 @@ module CLA_16bit_tb();
       A = $random;
       B = $random;
       cin = $random;
-      if (cout_t != cout || S_t != S) begin
-        $display("Error. cout_t: %d, cout: %d, S_t: %d, S: %d");
+      #20
+      $display("cout_t: %d, cout: %d, S_t: %d, S: %d", cout_t, cout, S_t, S);
+      if (cout_t !== cout || S_t !== S) begin
+        $display("Error");
         $stop();
       end
     end
     $display("Test passed");
     $stop();
   end
-endmodule;
+endmodule
