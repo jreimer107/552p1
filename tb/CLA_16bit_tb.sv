@@ -1,6 +1,7 @@
+//TODO: Implement sat and red
 module CLA_16bit_tb();
   reg [15:0] A, B;
-  reg cin;
+  reg cin, sat, red;
   wire cout;
   wire [15:0] S;
 

@@ -10,3 +10,4 @@ module Wallace(in, out);
   FA adder3(.A(s21), .B(s11), .cin(s01), .cout(s31), .S(s30));
 
   assign out = {s31, s30, s20};
+endmodule
