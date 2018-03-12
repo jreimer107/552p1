@@ -1,7 +1,10 @@
 /* Reduction Unit
 * This module takes the sums from the lower level CLA4s and creates a reducted
 * sum (aaaabbbbccccdddd + eeeeffffgggghhhh = (aaaa+eeee) + (bbbb+ffff) +
-*    (cccc+gggg) + (dddd+hhhh)), essentially summing 8 4bit numbers.
+* (cccc+gggg) + (dddd+hhhh)), essentially summing 8 4bit numbers. This is
+* done using a tree of 4bit CLAs. The lowest 4 are exterior to this module, and
+* their outputs are fed in here. This module contains the middle two and top one
+* 4bit CLAs, which calculate bits 3:0 of the reducted sum.
 * This can create 3 bits of carry out, so a wallace tree is used to sum these.
 * The whole sum is then sign extended for the remaining 9 bits.
 * In order to properly work, lower level Propegate signals must be zeroed.
@@ -17,11 +20,12 @@ module Reduction(s0, s1, s2, s3, g0, g1, g2, g3, S_red);
   assign G[3:0] = {g3, g2, g1, g0}; //Organize inputs for wallace tree
 
   //Medium level two CLAs
-  CLA_4bit cla4(.A(s0), .B(s1), .c0(1'b0), .S(s4), .G(G[4]), .P());
-  CLA_4bit cla5(.A(s3), .B(s2), .c0(1'b0), .S(s5), .G(G[5]), .P());
+  CLA_4bit cla4(.A(s0), .B(s1), .c0(1'b0), .S(s4), .G(G[4]), .P(), .sat(1'b0), .red(1'b0));
+  CLA_4bit cla5(.A(s3), .B(s2), .c0(1'b0), .S(s5), .G(G[5]), .P(), .sat(1'b0), .red(1'b0));
 
   //High level CLA, gets lower 4 bits of S_red
-  CLA_4bit cla6(.A(s5), .B(s4), .c0(1'b0), .S(S_red[3:0]), .G(G[6]), .P());
+  CLA_4bit cla6(.A(s5), .B(s4), .c0(1'b0), .S(S_red[3:0]), .G(G[6]), .P(),
+    .sat(1'b0), .red(1'b0));
 
   //Gets bits 6:4 of S_red
   Wallace tree(.in(G), .out(S_red[6:4]));

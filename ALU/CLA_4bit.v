@@ -34,7 +34,7 @@ module CLA_4bit(A, B, c0, S, G, P, sat, red);
 
 //Saturation for PADDSB
   assign S = sat ?
-    ((S_raw[3] & ~A[3] & ~B[3]) ? 4'b1111  :   //Negative overflow
+    ((S_raw[3] & ~A[3] & ~B[3]) ? 4'b1000  :   //Negative overflow
      (~S_raw[3] & A[3] & B[3])  ? 4'b0111) :   //Positive overflow
      S_raw;                                    //No overflow
 

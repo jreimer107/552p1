@@ -1,47 +1,55 @@
-module ALU(A, B, op, out, zero);
+/* ALU
+* This module computes all arithmetic functions needed by the cpu.
+* @input A, B are the two operands to use.
+* @input op is the instruction issued.
+* @output out is the result of the arithmetic function.
+*/
+
+//TODO: write a tb and test.
+
+//TODO: I have the first 8 functions figured out. No idea how the memory or
+// control functions are supposed to interact with the ALU, so I'm assuming they
+// all need ADD. This is probably shortsighted and needs to change later.
+module ALU(A, B, op, out);
   input [15:0] A, B;
   input [3:0] op;
   output [15:0] out;
   output zero;
 
-  wire [15:0] out_and, out_or, out_op, B_op;
-  wire cin, cout;
-  wire invert;
+  wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
 
-  localparam  op_or = 2'b00;
-  localparam  op_and = 2'b01;
-  localparam  op_op = 2'b1x;
+  localparam  ADD = 4'b0000;  //CLA
+  localparam  SUB = 4'b0001;  //CLA
+  localparam  RED = 4'b0010;  //CLA
+  localparam  XOR = 4'b0011;
+  localparam  SLL = 4'b0100;
+  localparam  SRA = 4'b0101;
+  localparam  ROR = 4'b0110;
+  localparam  PADDSB = 4'b0111; //CLA
+  localparam  MEM = 4'b10xx;
+  localparam  CTRL = 4'b11xx;
 
-  /* ALUOP
-  * The op signal sent to the alu determines what it does.
-  * TODO: edit these as necessary.
-  * Memory instructions (opcode 10xx) should use ADD.
-  * Control instructions (opcode 11xx) should use SUBTRACT.
-  * Arithmetic instructions (opcode 0xxx) use whatever is necessary.
-  * ADD (0000) uses ADD.
-  * SUB (0001) uses SUBTRACT.
-  * RED (0010) uses ?
-  * XOR (0011) uses XOR.
-  * SLL (0100) uses SHIFT LOGICAL.
-  * SRA (0101) uses SHIFT ARITHMETIC.
-  * ROR (0110) uses ROTATE.
-  * PADDSB (0111) uses ?
-  */
+  ///////////////////////CLA_16bit//////////////////////////////////////////////
+  //Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
+  wire [15:0] B_cla;
+  wire cin, cout, sat, red;
+  assign B_cla = (op == SUB) ? ~B : B;
+  assign cin = (op == SUB);
+  assign sat = (op == PADDSB);
+  assign red = (op == RED);
+  CLA_16bit CLA(.A(A), .B(B_cla), .cin(cin), .cout(cout), .S(out_cla), .red(red), .sat(sat));
+  //////////////////////////////////////////////////////////////////////////////
 
-  //TODO: I think we're going to have to spread this out; we need to attach
-  //  a CSA tree in here and attach muxes for reduction and saturation. I
-  // think that the reduction problem from the hell exam was a hint.
-  CLA_16bit adder(.A(A), .B(B_op), .cin(cin), .cout(cout), .S(out_op));
+  //Shifter
+  Shifter shift(.Shift_In(A), .Shift_Val(B), .Mode(op[2:1]), .Shift_Out(out_shift));
 
-  assign out_or = A | B;
-  assign out_and = A & B;
-  assign B_op = invert ? ~B : B;
-  assign out_op = A + B_op;
+  //XOR
+  assign out_xor = A ^ B;
 
-  //This is going to want an actual adder but thats for another time
+  //output mux
+  assign out = (op == XOR) ? out_xor :
+               (op == PADDSB) ? out_cla :    //THIS FUCKER IS IN THE WRONG PLACE
+               (op[3:2] == 2'b01) ? out_shift :
+                  out_cla;
 
-  assign out = (op == op_or) ? out_or :
-               (op == op_and) ? out_and :
-                                out_op;
-  assign zero = (op_out == 16'h0000);
 endmodule
