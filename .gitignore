@@ -1,3 +1,5 @@
 *.mpf
 *.mti
 work/
+*proj/*
+*transcript*
