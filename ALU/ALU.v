@@ -10,10 +10,11 @@
 //TODO: I have the first 8 functions figured out. No idea how the memory or
 // control functions are supposed to interact with the ALU, so I'm assuming they
 // all need ADD. This is probably shortsighted and needs to change later.
-module ALU(A, B, op, out);
+module ALU(A, B, op, ovfl, out);
   input [15:0] A, B;
   input [3:0] op;
   output [15:0] out;
+  output ovfl;
 
   wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
 
