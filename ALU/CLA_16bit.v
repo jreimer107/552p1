@@ -1,3 +1,6 @@
+// RECOMMEND CHANGING sat SIGNAL TO paddsb
+
+
 /* CLA_16bit
 * The second-level hierarchical CLA structure. Has 4 4bit adders and one CLA
 * logic block to compute carries for the 4bit level and overall generates and
@@ -15,11 +18,11 @@
 //TODO: update TB to include reduction. Reduction is confirmed working by itself.
 module CLA_16bit(A, B, cin, cout, S, sat, red);
   input [15:0] A, B;
-  input cin;
+  input cin, red, sat;
   output cout;
   output [15:0] S;
 
-  signed wire [15:0] S_raw, S_red;
+  wire signed [15:0] S_raw, S_red;
   wire c1, c2, c3;
   wire [3:0] g, p;
   wire G, P;
@@ -34,7 +37,7 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
     .G_out(G), .P_out(P), .c1(c1), .c2(c2), .c3(c3));
 
   //Reduction block
-  Reduction red(.s0(S_raw[3:0]), .s1(S_raw[7:4]), .s2(S_raw[11:8]), .s3(S_raw[15:12]),
+  Reduction reduct(.s0(S_raw[3:0]), .s1(S_raw[7:4]), .s2(S_raw[11:8]), .s3(S_raw[15:12]),
     .g0(g[0]), .g1(g[1]), .g2(g[2]), .g3(g[3]), .S_red(S_red));
 
   //This calculation is only needed for the highest level block.
@@ -47,11 +50,60 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
   * (S_red). If neither are issued, we need to saturate the output to 16bits.
   * Using overflow, probably.
   */
-  assign S = (!sat & !red) ?
-    ((S_raw[15] & ~A[15] & ~B[15]) ? 16'h8000  :   //Negative overflow
-     (~S_raw[15] & A[15] & B[15])  ? 16'h7FFF) :   //Positive overflow
-    (red) ? S_red :                                //Reduction command
-     S_raw;                                        //No overflow or reduction
+  
+    
+  assign S =
+    red ?
+      S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0] // reduction 
+    : 
+    sat ? // saturation done in the CLA4
+      S_raw
+    :
+    S_raw[15] & ~A[15] & ~B[15] ?			// neg overflow
+  	  16'h8000
+  	: 
+    ~S_raw[15] & A[15] & B[15] ?			// pos overflow
+      16'h7FFF  
+  	:
+      S_raw;
+  
+//  assign S = 
+//    (!sat & !red) ? 				// not a paddsb or red
+//      S_raw[15] & ~A[15] & ~B[15] ?			// neg overflow
+//  	    16'h8000
+//  	  : 
+//      ~S_raw[15] & A[15] & B[15] ?			// pos overflow
+//        16'h7FFF  
+//  	  :
+//	  (!sat &  red) ?			 // red	  
+//  	    S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0] 
+//  	    :
+//        (sat & !red) ? // paddsb
+//          S_raw
+//        :
+//      :
+
+//  
+//  assign S = (!sat & !red) ?
+//    ((S_raw[15] & ~A[15] & ~B[15]) ? 16'h8000  :   //Negative overflow
+//     (~S_raw[15] & A[15] & B[15])  ? 16'h7FFF) :   //Positive overflow
+//    (red) ? S_red :                                //Reduction command
+//     S_raw;                                        //No overflow or reduction
+
+//  assign S = sat ? // sat command
+//    S_raw[15] & ~A[15] & ~B[15] ? 16'h'// neg overflow
+//    : S_raw
+
+//  assign S = (!sat & !red) ?
+//    ((S_raw[15] & ~A[15] & ~B[15]) ? 16'h8000  :   //Negative overflow
+//     (~S_raw[15] & A[15] & B[15])  ? 16'h7FFF) :   //Positive overflow
+//    (red) ? S_red :                                //Reduction command
+//     S_raw;       
+
+
+
+
 
 
 endmodule
+
