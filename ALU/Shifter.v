@@ -42,8 +42,8 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
       	{Shift_In[15], Shift_In[15:1]} :
       ROR ? 
       	{Shift_In[15], Shift_In[15:1]} : 
-   	  Shift_Val
-    : Shift_Val;
+   	  Shift_In
+    : Shift_In;
       
   assign shift1 = 
     Shift_Val[1] ?
@@ -53,7 +53,7 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
       	{{2{shift0[15]}}, shift0[15:2]} :
       ROR ? 
       	{shift0[1:0], shift0[15:2]} : 
-      Shift_Val
+      shift0
     : shift0;
     
   assign shift2 = 
@@ -64,7 +64,7 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
       	{{4{shift1[15]}}, shift1[15:4]} :
       ROR ? 
       	{shift1[3:0], shift1[15:4]} : 
-      Shift_Val
+      shift1
     : shift1;
     
   assign Shift_Out = 
@@ -75,7 +75,7 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
       	{{8{shift0[15]}}, shift1[15:8]} :
       ROR ? 
       	{shift0[7:0], shift0[15:8]} : 
-      Shift_Val
+      shift2
     : shift2;
 
 

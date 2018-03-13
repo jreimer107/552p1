@@ -19,64 +19,71 @@ initial begin
 
     // zero
     // 0000 + 0000 = 0000
+    #1
     A = 16'h0000;
     B = 16'h0000;
     if (out !== 16'h0000) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0x0000 + 0x0000 = 0x0000, got: %x", out);
     end
 
     // pos + pos
     // 1111 + 1111 = 2222
+    #1
     A = 16'h1111;
     B = 16'h1111;
     if (out !== 16'h2222) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0x1111 + 0x1111 = 0x2222, got: %x", out);
     end
 
     // neg + neg
     // FFFF + FFFF = EEEE
+    #1
     A = 16'hFFFF;
     B = 16'hFFFF;
     if (out !== 16'hEEEE) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0xFFFF + 0xFFFF = 0xEEEE, got: %x", out);
     end
 
     // neg + pos
     // DDDD + 4444 = 1111
+    #1
     A = 16'h4444;
     B = 16'h1111;
     if (out !== 16'h1111) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0x4444 + 0x1111 = 0x1111, got: %x", out);
     end
 
     // pos + neg
     // CCCC + 3333 = 8888
+    #1
     A = 16'hCCCC;
     B = 16'h3333;
     if (out !== 16'h8888) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0xCCCC + 0x3333 = 0x8888, got: %x", out);
     end
 
     // test pos saturation
     // 7777 + 7777 = 7777
+    #1
     A = 16'h7777;
     B = 16'h7777;
     if (out !== 16'h7777) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0x7777 + 0x7777 = 0x7777, got: %x", out);
     end
 
     // test neg saturation
     // 8888 + 8888 = 8888
+    #1
     A = 16'h8888;
     B = 16'h8888;
     if (out !== 16'h8888) begin
-        machine_broke = 0;
+        machine_broke = 1;
         $display("PADDSB: 0x8888 + 0x8888 = 0x8888, got: %x", out);
     end
 
@@ -89,6 +96,7 @@ initial begin
         $display("Tests passed!");
     end
 
+	$stop();
 
 end
 
