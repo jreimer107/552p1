@@ -14,7 +14,6 @@ module ALU(A, B, op, out);
   input [15:0] A, B;
   input [3:0] op;
   output [15:0] out;
-  output zero;
 
   wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
 

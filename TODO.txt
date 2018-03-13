@@ -1,0 +1,12 @@
+Just put an x in front of things that are done, don't delete them from the list
+
+
+COMPUTE INSTRUCTIONS
+    - Complete ALU design
+        - PADDSB
+    - Complete ALU testing
+
+
+MEMORY INSTRUCTIONS
+
+CONTROL INSTRUCTIONS
