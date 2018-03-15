@@ -1,4 +1,4 @@
-  
+
 module cpu(clk, rst, pc, hlt);
   input clk, rst;
   output [15:0] pc;
@@ -7,26 +7,30 @@ module cpu(clk, rst, pc, hlt);
   //Control wires
   //TODO: write and tests control unit
   wire RegDest, Jump, Branch, MemRead, MemtoReg, ALUOP, MemWrite, ALUSrc, RegWrite;
+  wire [1:0] ImmSize;
   wire [15:0] WriteData;
   /////////////////////////IF//////////////////////////////////////////////////
-  wire [15:0] pc_in, pc, pc_inc;
+  wire [15:0] pc_in, pc_inc;
   Register PC(.clk(clk), .rst(rst), .D(pc_in), .WriteReg(1'b1),
     .ReadEnable1(1'b1), .ReadEnable2(1'b0), .Bitline1(pc), .Bitline2());
 
-  CLA_16bit pc_incrementor(.A(pc), .B(16'h0004), .cin(1'b0), .cout(),
+  CLA_16bit pc_incrementor(.A(pc), .B(16'h0002), .cin(1'b0), .cout(),
     .S(pc_inc), .sat(1'b0), .red(1'b0));
 
   wire [15:0] instr;
   memory Imem(.data_out(instr), .data_in(), .addr(pc), .enable(1'b1),
     .wr(1'b0), .clk(clk), .rst(rst));
   ////////////////////////////////ID///////////////////////////////////////////
-  wire [3:0] DstReg;
+  wire [3:0] ReadReg2;
   wire [15:0] RegData1, RegData2;
-  wire [15:0] immSE; //Unnecessary? Immediate logic
-  assign immSE = {{7{instr[8]}}, instr[8:0]};
-  assign DstReg = RegDst ? instr[3:0] : instr[7:4];
-  RegisterFile Regs(.clk(clk), .rst(rst), .SrcReg1(instr[11:8]),
-    .SrcReg2(instr[7:4]), .DstReg(DstReg), .WriteReg(RegWrite),
+  wire [15:0] immSE;
+  assign immSE = (immSize == 2'b00) ? {{12{instr[3]}}, instr[3:0]} :
+  				 (immSize == 2'b01) ? {{8{instr[7]}}, instr[7:0]} :
+				 					  {{7{instr[8]}}, instr[8:0]};
+
+  assign ReadReg2 = RegDest ? instr[11:8] : instr[3:0];
+  RegisterFile Regs(.clk(clk), .rst(rst), .SrcReg1(instr[7:4]),
+    .SrcReg2(instr[3:0]), .DstReg(instr[11:8]), .WriteReg(RegWrite),
     .DstData(WriteData), .SrcData1(RegData1), .SrcReg2(RegData2));
   /////////////////////////////////EX////////////////////////////////////////////
   wire [15:0] alu_in, alu_out;
@@ -48,10 +52,7 @@ module cpu(clk, rst, pc, hlt);
   ///////////////////////////////////WB//////////////////////////////////////////
   assign WriteData = MemtoReg ? mem_out : alu_out;
 
-  wire [15:0] pc_branch;
-  wire conditionCode; //TODO: implement condition codes
   assign pc_branch = (Branch & conditionCode) ? branch_dest : pc_inc;
 
-  assign pc_in = Jump ? {pc_inc[15:14], (instr[8:0] << 1)};
 
 endmodule

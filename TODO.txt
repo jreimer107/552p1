@@ -1,5 +1,6 @@
 Just put an x in front of things that are done, don't delete them from the list
 
+Write and test control unit
 
 COMPUTE INSTRUCTIONS
     - Complete ALU design
