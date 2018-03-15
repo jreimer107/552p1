@@ -137,3 +137,4 @@ module Control(op, RegDest, MemRead, MemWrite, ALUSrc, RegWrite, ImmSize,
   assign DataSrc = (op[3] && ~op[2]) ? 2'b00 :
   				   PCS ? 2'b1x :
 				   		 2'b01;
+endmodule

@@ -11,11 +11,12 @@
 *   current codes and 0 otherwise.
 */
 //TODO: Write a tb and test lol.
-module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, out);
+module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, match);
   input clk, rst;
-  input [3:0] opcode;
+  input alu_ovfl;
+  input [15:0] instr;
   input [15:0] alu_out;
-  output out;
+  output match;
 
   localparam  ADD = 4'b0000;
   localparam  SUB = 4'b0001;
@@ -25,9 +26,9 @@ module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, out);
   localparam  ROR = 4'b0110;
 
   wire [3:0] opcode;  //Determines wether to write or read codes
-  wire [2:0] ccc;     //Requested code
+  wire [2:0] cc_Req;     //Requested code
   assign opcode = instr[15:12];
-  assign ccc = instr[11:9];
+  assign cc_Req = instr[11:9];
 
   wire [2:0] regWrite; //NVZ order (write enables)
   assign regWrite = (opcode === ADD || opcode === SUB) ? 3'b111 :
@@ -36,14 +37,14 @@ module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, out);
 
   //regWrite will be 3'b000 if instruction relies on condition code
   wire n, v, z; //dff inputs
-  wire [2:0] cc_out
+  wire [2:0] cc_Curr;
   assign n = alu_out[15];
   assign v = alu_ovfl;
   assign z = ~|alu_out;
-  dff negative(.q(cc_out[2]), .d(n), .wen(regWrite[2]), .clk(clk), .rst(rst));
-  dff overflow(.q(cc_out[1]), .d(v), .wen(regWrite[1]), .clk(clk), .rst(rst));
-  dff zero(.q(cc_out[0]), .d(z), .wen(regWrite[0]), .clk(clk), .rst(rst));
+  dff negative(.q(cc_Curr[2]), .d(n), .wen(regWrite[2]), .clk(clk), .rst(rst));
+  dff overflow(.q(cc_Curr[1]), .d(v), .wen(regWrite[1]), .clk(clk), .rst(rst));
+  dff zero(.q(cc_Curr[0]), .d(z), .wen(regWrite[0]), .clk(clk), .rst(rst));
 
-  assign out = (cc_out === ccc);
+  assign match = (cc_Req === cc_Curr);
 
 endmodule

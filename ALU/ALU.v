@@ -3,6 +3,8 @@
 * @input A, B are the two operands to use.
 * @input op is the instruction issued.
 * @output out is the result of the arithmetic function.
+* @output zero signifies if the output is 0.
+* @output ovfl signifies if a CLA operation caused overflow.
 */
 
 //TODO: write a tb and test.
@@ -32,12 +34,13 @@ module ALU(A, B, op, ovfl, out);
   ///////////////////////CLA_16bit//////////////////////////////////////////////
   //Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
   wire [15:0] B_cla;
-  wire cin, cout, sat, red;
+  wire sub, sat, red;
   assign B_cla = (op == SUB) ? ~B : B;
-  assign cin = (op == SUB);
+  assign sub = (op == SUB);
   assign sat = (op == PADDSB);
   assign red = (op == RED);
-  CLA_16bit CLA(.A(A), .B(B_cla), .cin(cin), .cout(cout), .S(out_cla), .red(red), .sat(sat));
+  CLA_16bit CLA(.A(A), .B(B_cla), .cin(sub), .ovfl(ovfl), .S(out_cla),
+  	.red(red), .sat(sat));
   //////////////////////////////////////////////////////////////////////////////
 
   //Shifter

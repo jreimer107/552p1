@@ -7,19 +7,20 @@
 * propagates at the 16bit level. Also contains the reduction unit necessary for
 * the RED instruction. Non PADDSB or RED outputs are saturated.
 * @input A and B are the word (16 bit) addends.
-* @input cin is the carry in value given by ALU or other higher structure.
+* @input sub signifies wether a addition or subtraction operation; essentially
+*   a carry-in.
 * @input sat signifies a PADDSB isntruction, which prevents carry propagation
 *   and saturates 4bit outputs.
 * @input reg signifies a RED instruction, which uses the reduction unit to
 *   reduction add both addends.
 * @output S is the sum calculated by adding A, B, and cin.
-* @output cout is the carry out value from the calculation.
+* @output ovfl signifies if overflow occurred.
 */
 //TODO: update TB to include reduction. Reduction is confirmed working by itself.
-module CLA_16bit(A, B, cin, cout, S, sat, red);
+module CLA_16bit(A, B, sub, S, sat, red, ovfl);
   input [15:0] A, B;
-  input cin, red, sat;
-  output cout;
+  input sub, red, sat;
+  output ovfl;
   output [15:0] S;
 
   wire signed [15:0] S_raw, S_red;
@@ -27,7 +28,7 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
   wire [3:0] g, p;
   wire G, P;
 
-  CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(cin), .S(S_raw[3:0]), .G(g[0]), .P(p[0]), .sat(sat), .red(red));
+  CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(sub), .S(S_raw[3:0]), .G(g[0]), .P(p[0]), .sat(sat), .red(red));
   CLA_4bit adder1(.A(A[7:4]), .B(B[7:4]), .c0(c1), .S(S_raw[7:4]), .G(g[1]), .P(p[1]), .sat(sat), .red(red));
   CLA_4bit adder2(.A(A[11:8]), .B(B[11:8]), .c0(c2), .S(S_raw[11:8]), .G(g[2]), .P(p[2]), .sat(sat), .red(red));
   CLA_4bit adder3(.A(A[15:12]), .B(B[15:12]), .c0(c3), .S(S_raw[15:12]), .G(g[3]), .P(p[3]), .sat(sat), .red(red));
@@ -41,7 +42,7 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
     .g0(g[0]), .g1(g[1]), .g2(g[2]), .g3(g[3]), .S_red(S_red));
 
   //This calculation is only needed for the highest level block.
-  assign cout = G | (P & cin);
+  //assign cout = G | (P & cin);
 
   //Saturation logic. Only for add/sub.
   //TODO: Clean this up, it looks atrocious. Devin, you're good at this.
@@ -50,40 +51,42 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
   * (S_red). If neither are issued, we need to saturate the output to 16bits.
   * Using overflow, probably.
   */
-  
-    
+
+
+
+
   assign S =
     red ?
-      S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0] // reduction 
-    : 
+      S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0] // reduction
+    :
     sat ? // saturation done in the CLA4
       S_raw
     :
     S_raw[15] & ~A[15] & ~B[15] ?			// neg overflow
   	  16'h8000
-  	: 
+  	:
     ~S_raw[15] & A[15] & B[15] ?			// pos overflow
-      16'h7FFF  
+      16'h7FFF
   	:
       S_raw;
-  
-//  assign S = 
+
+//  assign S =
 //    (!sat & !red) ? 				// not a paddsb or red
 //      S_raw[15] & ~A[15] & ~B[15] ?			// neg overflow
 //  	    16'h8000
-//  	  : 
-//      ~S_raw[15] & A[15] & B[15] ?			// pos overflow
-//        16'h7FFF  
 //  	  :
-//	  (!sat &  red) ?			 // red	  
-//  	    S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0] 
+//      ~S_raw[15] & A[15] & B[15] ?			// pos overflow
+//        16'h7FFF
+//  	  :
+//	  (!sat &  red) ?			 // red
+//  	    S_raw[15:12] + S_raw[11:8] + S_raw[7:4] + S_raw[3:0]
 //  	    :
 //        (sat & !red) ? // paddsb
 //          S_raw
 //        :
 //      :
 
-//  
+//
 //  assign S = (!sat & !red) ?
 //    ((S_raw[15] & ~A[15] & ~B[15]) ? 16'h8000  :   //Negative overflow
 //     (~S_raw[15] & A[15] & B[15])  ? 16'h7FFF) :   //Positive overflow
@@ -98,12 +101,11 @@ module CLA_16bit(A, B, cin, cout, S, sat, red);
 //    ((S_raw[15] & ~A[15] & ~B[15]) ? 16'h8000  :   //Negative overflow
 //     (~S_raw[15] & A[15] & B[15])  ? 16'h7FFF) :   //Positive overflow
 //    (red) ? S_red :                                //Reduction command
-//     S_raw;       
+//     S_raw;
 
 
-
+assign ovfl = ((S_raw[15] & ~A[15] & ~B[15]) || (~S_raw[15] & A[15] & B[15]));
 
 
 
 endmodule
-
