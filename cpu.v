@@ -5,10 +5,10 @@ module cpu(clk, rst, pc, hlt);
   output hlt;
 
   //Control wires
-  //TODO: write and tests control unit
-  wire RegDest, Jump, Branch, MemRead, MemtoReg, ALUOP, MemWrite, ALUSrc, RegWrite;
-  wire [1:0] ImmSize;
+  wire RegDest, MemRead, MemWrite, ALUSrc, RegWrite;
+  wire [1:0] ImmSize, BranchSrc, DataSrc;
   wire [15:0] WriteData;
+
   /////////////////////////IF//////////////////////////////////////////////////
   wire [15:0] pc_in, pc_inc;
   Register PC(.clk(clk), .rst(rst), .D(pc_in), .WriteReg(1'b1),
@@ -20,6 +20,10 @@ module cpu(clk, rst, pc, hlt);
   wire [15:0] instr;
   memory Imem(.data_out(instr), .data_in(), .addr(pc), .enable(1'b1),
     .wr(1'b0), .clk(clk), .rst(rst));
+
+  Control ctrl(.op(instr[15:12]), .RegDest(RegDest), .MemRead(MemRead),
+  	.MemWrite(MemWrite), .ALUSrc(ALUSrc), .RegWrite(RegWrite),
+	.ImmSize(ImmSize), .BranchSrc(BranchSrc), .DataSrc);
   ////////////////////////////////ID///////////////////////////////////////////
   wire [3:0] ReadReg2;
   wire [15:0] RegData1, RegData2;
@@ -50,9 +54,12 @@ module cpu(clk, rst, pc, hlt);
   memory DMem(.data_out(mem_out), .data_in(RegData2), .addr(alu_out),
     .enable(MemRead), .wr(MemWrite), .clk(clk), .rst(rst));
   ///////////////////////////////////WB//////////////////////////////////////////
-  assign WriteData = MemtoReg ? mem_out : alu_out;
+  assign WriteData = (DataSrc == 2'b00) ? mem_out :
+  					 (DataSrc == 2'b1x) ? alu_out :
+					 					  pc;
 
-  assign pc_branch = (Branch & conditionCode) ? branch_dest : pc_inc;
-
+  assign pc_branch = (~conditionCode || BranchSrc == 2'b00) ? pc_inc :
+  					 (BranchSrc == 2'b01) ? branch_dest :
+					 		RegData2;
 
 endmodule

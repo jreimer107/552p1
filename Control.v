@@ -1,9 +1,8 @@
-module Control(op, RegDest, Branch, MemRead, MemtoReg, ALUOP, MemWrite,
-  ALUSrc, RegWrite, ImmSize, BranchSrc);
+module Control(op, RegDest, MemRead, MemWrite, ALUSrc, RegWrite, ImmSize,
+	BranchSrc, DataSrc);
   input [3:0] op;
-  output RegDest, Branch, MemRead, MemtoReg, MemWrite, ALUSrc, RegWrite, PCStr;
-  output [3:0] ALUOP;
-  output [1:0] ImmSize;
+  output RegDest, MemRead, MemWrite, ALUSrc, RegWrite;
+  output [1:0] ImmSize, DataSrc, BranchSrc;
 
   /*
   localparam  ADD = 4'b0000;  //CLA
@@ -23,6 +22,17 @@ module Control(op, RegDest, Branch, MemRead, MemtoReg, ALUOP, MemWrite,
   localparam  PCS = 4'b1110;
   localparam  HLT = 4'b1111;
   */
+
+  //TODO:
+  	//RegDest X
+	//MemRead X
+	//MemWrite X
+	//ALUSrc X
+	//RegWrite X
+	//ImmSize X
+	//DataSrc X
+	//BranchSrc X
+
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     HLT;
@@ -87,6 +97,14 @@ module Control(op, RegDest, Branch, MemRead, MemtoReg, ALUOP, MemWrite,
   //0 if ReadReg2 gets slot 3, 1 if ReadReg2 gets slot 1
   assign RegDest = SW;
 
+  //MEMREAD//
+  assign MemRead = LW;
+  assign MemWrite = SW;
+
+  //ALUSrc//
+  //Do we need the immediate?
+  assign ALUSrc = (SLL || SRA || ROR || (op[3] && ~op[2]));
+
   //REGWRITE//
   //ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
   //all 0xxx, 1000 and 1010.
@@ -104,9 +122,18 @@ module Control(op, RegDest, Branch, MemRead, MemtoReg, ALUOP, MemWrite,
   //BRANCHSRC//
   //If B, immediate used.
   //If BR, slot 2 data used.
-  //0 for use immediate, 1 for use reg.
-  assign BranchSrc = ~B;
+  //Else pc_inc used.
+  //0 for use pc_inc
+  //1 for use immediate
+  //2 for use RegData2.
+  assign BranchSrc = B ? 2'b01 :
+  					 BR ? 2'b1x :
+					  	  2'b00;
 
-  //ALUSRC//
-  //Arith uses rt (slot 3);
-  //
+  //DATASRC//
+  //00 if data from MEMORY
+  //01 if data from ALU
+  //1x if data from PC
+  assign DataSrc = (op[3] && ~op[2]) ? 2'b00 :
+  				   PCS ? 2'b1x :
+				   		 2'b01;
