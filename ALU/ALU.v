@@ -39,12 +39,12 @@ module ALU(A, B, op, ovfl, out);
   assign sub = (op == SUB);
   assign sat = (op == PADDSB);
   assign red = (op == RED);
-  CLA_16bit CLA(.A(A), .B(B_cla), .cin(sub), .ovfl(ovfl), .S(out_cla),
+  CLA_16bit CLA(.A(A), .B(B_cla), .sub(sub), .ovfl(ovfl), .S(out_cla),
   	.red(red), .sat(sat));
   //////////////////////////////////////////////////////////////////////////////
 
   //Shifter
-  Shifter shift(.Shift_In(A), .Shift_Val(B), .Mode(op[2:1]), .Shift_Out(out_shift));
+  Shifter shift(.Shift_In(A), .Shift_Val(B[3:0]), .Mode(op[2:1]), .Shift_Out(out_shift));
 
   //XOR
   assign out_xor = A ^ B;
