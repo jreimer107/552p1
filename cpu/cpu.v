@@ -4,12 +4,13 @@ module cpu(clk, rst_n, pc_out, hlt);
 	output [15:0] pc_out;
 	output hlt;
 
-	wire rst = ~rst_n;
+	wire rst;
+	assign rst = ~rst_n;
 	wire [15:0] WriteData;
 
 ///////////////////////////IF//////////////////////////////////////////////////
 	wire [15:0] pc_in, instr;
-	fetch IF(.pc_in(pc_in), .pc_out(pc_out), .instr(instr));
+	fetch IF(.clk(clk), .rst(rst), .pc_in(pc_in), .pc_out(pc_out), .instr(instr));
 
 	wire RegSrc, RegWrite, MemRead, MemWrite, ALUSrc;
 	wire [1:0] ImmSize, BranchSrc, DataSrc;

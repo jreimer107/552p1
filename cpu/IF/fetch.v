@@ -1,4 +1,5 @@
-module fetch(pc_in, pc_out, instr);
+module fetch(pc_in, pc_out, instr, clk, rst);
+	input clk, rst;
 	input [15:0] pc_in;
 	output [15:0] pc_out, instr;
 

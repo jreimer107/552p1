@@ -3,3 +3,6 @@
 work/
 *proj/*
 *transcript*
+*.log
+*.trace
+*.vcd
