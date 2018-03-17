@@ -1,38 +1,26 @@
-module Control(op, RegDest, MemRead, MemWrite, ALUSrc, RegWrite, ImmSize,
+/* Control.v
+* This module determines the statuses of control signals throughout the cpu.
+* @input op is the opcode (bits 15:12) of the current instruction.
+* @output RegSrc determines whether the ReadReg 2 input of the Register file
+*	in the ID stage gets instr[11:8] (only for SW) or instr[3:0] (normal).
+* @output RegWrite determines if the Register specified by the WriteReg input
+*	(instr[11:8]) to the register file should be written to or not.
+* @output MemRead signifies if data should be read from DMemory.
+* @output MemWrite signifies if data should be written to DMemory.
+* @output ALUSrc determines if the output RegData2 from the register file or
+*	the supplied immediate should be forwarded to input B of the ALU.
+* @output ImmSize specifies whether the given immediate should be sign extended
+*	from 4, 8, or 9 bits.
+* @output DataSrc specifies where the WriteData input to the register file comes
+*	from: mem_out, alu_out, or pc_out.
+* @output BranchSrc determines whether the next instruction address is taken
+*	from pc_out, RegData2, or the supplied immediate. 
+*/
+module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
 	BranchSrc, DataSrc);
   input [3:0] op;
-  output RegDest, MemRead, MemWrite, ALUSrc, RegWrite;
+  output RegSrc, RegWrite, MemRead, MemWrite, ALUSrc;
   output [1:0] ImmSize, DataSrc, BranchSrc;
-
-  /*
-  localparam  ADD = 4'b0000;  //CLA
-  localparam  SUB = 4'b0001;  //CLA
-  localparam  RED = 4'b0010;  //CLA
-  localparam  XOR = 4'b0011;
-  localparam  SLL = 4'b0100;
-  localparam  SRA = 4'b0101;
-  localparam  ROR = 4'b0110;
-  localparam  PADDSB = 4'b0111; //CLA
-  localparam  LW = 4'b1000;
-  localparam  SW = 4'b1001;
-  localparam  LHB = 4'b1010;
-  localparam  SHB = 4'b1011;
-  localparam  B = 4'b1100;
-  localparam  BR = 4'b1101;
-  localparam  PCS = 4'b1110;
-  localparam  HLT = 4'b1111;
-  */
-
-  //TODO:
-  	//RegDest X
-	//MemRead X
-	//MemWrite X
-	//ALUSrc X
-	//RegWrite X
-	//ImmSize X
-	//DataSrc X
-	//BranchSrc X
-
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     HLT;
@@ -95,7 +83,7 @@ module Control(op, RegDest, MemRead, MemWrite, ALUSrc, RegWrite, ImmSize,
   //If SW, RdReg2 gets instr[11:8], else gets instr[3:0]
   //Sometimes slot 1 is destination reg, sometimes is rt.
   //0 if ReadReg2 gets slot 3, 1 if ReadReg2 gets slot 1
-  assign RegDest = SW;
+  assign RegSrc = SW;
 
   //MEMREAD//
   assign MemRead = LW;

@@ -1,6 +1,6 @@
 module memory(clk, rst, alu_out, RegData2, MemRead, MemWrite, mem_out);
 	input clk, rst;
-	input MemRead, MemWritel
+	input MemRead, MemWrite;
 	input [15:0] alu_out, RegData2;
 	output [15:0] mem_out;
 
