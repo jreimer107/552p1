@@ -115,7 +115,7 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
   assign ImmSize = (shift || LW || SW) ? 2'b00 :
     B ? 2'b01 :
 	LLB ? 2'b10 :
-		  2'b11;
+	LHB	? 2'b11 : 2'bxx;
 
   //BRANCHSRC//
   //If B, immediate used.

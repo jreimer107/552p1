@@ -20,7 +20,7 @@ module decode(clk, rst,  instr, ImmSize, RegSrc, RegWrite, WriteData, imm, RegDa
 	assign imm = (ImmSize == 2'b00) ? {{12{instr[3]}}, instr[3:0]} :
 				 (ImmSize == 2'b01) ? {{7{instr[8]}}, instr[8:0]} :
 				 (ImmSize == 2'b10)	? {RegData2[15:8], instr[7:0]} :
-				  					  {instr[7:0], RegData2[7:0]};
+				  /*2'b11*/			  {instr[7:0], RegData2[7:0]};
 
 
 

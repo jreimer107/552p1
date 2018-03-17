@@ -9,6 +9,8 @@ module writeback(pc_out, alu_out, mem_out, imm, branch_dest, RegData2, DataSrc,
 					   (DataSrc == 2'b01) ? pc_out :
 					   (DataSrc == 2'b10) ? imm :
 											alu_out; //May need to be current pc
+	
+	//always @(WriteData);
 
 	assign pc_in = (~match || BranchSrc == 2'b00) ? pc_out :
 					   (BranchSrc == 2'b01) ? branch_dest :
