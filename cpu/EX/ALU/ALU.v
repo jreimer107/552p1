@@ -9,9 +9,6 @@
 
 //TODO: write a tb and test.
 
-//TODO: I have the first 8 functions figured out. No idea how the memory or
-// control functions are supposed to interact with the ALU, so I'm assuming they
-// all need ADD. This is probably shortsighted and needs to change later.
 module ALU(A, B, op, ovfl, out);
   input [15:0] A, B;
   input [3:0] op;

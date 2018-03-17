@@ -4,15 +4,50 @@ module ALU_tb();
 reg [15:0] A, B;
 reg [3:0] op;
 wire [15:0] out;
+wire ovfl;
 
 reg machine_broke = 0;
 
-ALU alu(.A(A), .B(B), .op(op), .out(out));
+ALU alu(.A(A), .B(B), .op(op), .ovfl(ovfl), .out(out));
 
+reg [15:0] S_i, S_t, B_sub;
 
 initial begin
 
+////////////////////////////ADD TEST////////////////////////////////////////////
+	op = 4'b0000;
 
+	repeat (50) begin
+		A = $random;
+		B = $random;
+		S_i = A + B;
+		if (S_i[15] && ~A[15] && ~B[15]) S_t = 16'h7FFF;
+		else if (~S_i[15] && A[15] && B[15]) S_t = 16'h8000;
+		else S_t = S_i;
+		#5
+		if (out !== S_t) begin
+			machine_broke = 1;
+			$display("%x + %x = %x, got %x", A, B, S_t, out);
+		end
+	end
+
+//////////////////////////SUB TEST/////////////////////////////////////////////
+	op = 4'b0001;
+
+	repeat (50) begin
+		A = $random;
+		B = $random;
+		B_sub = 0 - B;
+		S_i = A - B;
+		if (S_i[15] && ~A[15] && ~B_sub[15]) S_t = 16'h7FFF;
+		else if (~S_i[15] && A[15] && B_sub[15]) S_t = 16'h8000;
+		else S_t = S_i;
+		#5
+		if (out !== S_t) begin
+			machine_broke = 1;
+			$display("%x - %x = %x, got %x", A, B, S_t, out);
+		end
+	end
 
 ////////////////////////// PADDSB TEST /////////////////////////////////////////
     op = 4'b0111;

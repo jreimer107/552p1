@@ -3,8 +3,9 @@
 * @input op is the opcode (bits 15:12) of the current instruction.
 * @output RegSrc determines whether the ReadReg 2 input of the Register file
 *	in the ID stage gets instr[11:8] (only for SW) or instr[3:0] (normal).
-* @output RegWrite determines if the Register specified by the WriteReg input
-*	(instr[11:8]) to the register file should be written to or not.
+* @output RegWrite is a binary signal that determines if the Register specified
+*	by the WriteReg input (instr[11:8]) to the register file should be written
+*	to or not.
 * @output MemRead signifies if data should be read from DMemory.
 * @output MemWrite signifies if data should be written to DMemory.
 * @output ALUSrc determines if the output RegData2 from the register file or
@@ -14,32 +15,38 @@
 * @output DataSrc specifies where the WriteData input to the register file comes
 *	from: mem_out, alu_out, or pc_out.
 * @output BranchSrc determines whether the next instruction address is taken
-*	from pc_out, RegData2, or the supplied immediate. 
+*	from pc_out, RegData2, or the supplied immediate.
 */
 module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
-	BranchSrc, DataSrc);
+	BranchSrc, DataSrc, hlt);
   input [3:0] op;
-  output RegSrc, RegWrite, MemRead, MemWrite, ALUSrc;
+  output RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, hlt;
   output [1:0] ImmSize, DataSrc, BranchSrc;
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     HLT;
-  assign ADD = (op == 4'b0000);
-  assign SUB = (op == 4'b0001);
-  assign RED = (op == 4'b0010);
-  assign XOR = (op == 4'b0011);
-  assign SLL = (op == 4'b0100);
-  assign SRA = (op == 4'b0101);
-  assign ROR = (op == 4'b0110);
-  assign PADDSB = (op == 4'b0111);
-  assign LW = (op == 4'b1000);
-  assign SW = (op == 4'b1001);
-  assign LHB = (op == 4'b1010);
-  assign LLB = (op == 4'b1011);
-  assign B = (op == 4'b1100);
-  assign BR = (op == 4'b1101);
-  assign PCS = (op == 4'b1110);
-  assign HLT = (op == 4'b1111);
+
+  wire shift, memory;
+
+  assign ADD = 		(op == 4'b0000);
+  assign SUB = 		(op == 4'b0001);
+  assign RED = 		(op == 4'b0010);
+  assign XOR = 		(op == 4'b0011);
+  assign SLL = 		(op == 4'b0100);
+  assign SRA = 		(op == 4'b0101);
+  assign ROR = 		(op == 4'b0110);
+  assign PADDSB = 	(op == 4'b0111);
+  assign LW = 		(op == 4'b1000);
+  assign SW = 		(op == 4'b1001);
+  assign LHB = 		(op == 4'b1010);
+  assign LLB = 		(op == 4'b1011);
+  assign B = 		(op == 4'b1100);
+  assign BR = 		(op == 4'b1101);
+  assign PCS = 		(op == 4'b1110);
+  assign HLT = 		(op == 4'b1111);
+
+  assign shift = SLL || SRA || ROR;
+  assign memory = (op[3] && ~op[2]);
 
 
   //HB/SLOT     0       1       2      3
@@ -83,7 +90,9 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
   //If SW, RdReg2 gets instr[11:8], else gets instr[3:0]
   //Sometimes slot 1 is destination reg, sometimes is rt.
   //0 if ReadReg2 gets slot 3, 1 if ReadReg2 gets slot 1
-  assign RegSrc = SW;
+  //LLB and LHB read the current reg value and insert their immediate, so
+  //they need access to the register they will be writing to.
+  assign RegSrc = SW || LLB || LHB;
 
   //MEMREAD//
   assign MemRead = LW;
@@ -91,7 +100,7 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
 
   //ALUSrc//
   //Do we need the immediate?
-  assign ALUSrc = (SLL || SRA || ROR || (op[3] && ~op[2]));
+  assign ALUSrc = (shift || memory);
 
   //REGWRITE//
   //ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
@@ -99,13 +108,14 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
   assign RegWrite = (!op[3] || LW || LHB || LLB || PCS);
 
   //IMMSIZE//
-  //immediate of size 4 for shift and LW/SW
-  //size 8 for LHB/SHB
-  //size 9 for B (not thru alu)
-  //ImmSize 00 for 4, 01 for 8, 1x for 9.
-  //Used to sign extend immediate to 16bit value.
-  assign ImmSize = (SRA || SLL || ROR || LW || SW) ? 2'b00 :
-    (LHB || LLB) ? 2'b01 : 2'b1x;
+  //immediate of size 4 for shift and LW/SW, SE to 16 (00)
+  //size 9 for B, SE to 16 (01)
+  //size 8 for LLB, arrange to be lower byte. (10)
+  //size 8 for LHB, arrange to be higher byte (11)
+  assign ImmSize = (shift || LW || SW) ? 2'b00 :
+    B ? 2'b01 :
+	LLB ? 2'b10 :
+		  2'b11;
 
   //BRANCHSRC//
   //If B, immediate used.
@@ -120,9 +130,13 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
 
   //DATASRC//
   //00 if data from MEMORY
-  //01 if data from ALU
-  //1x if data from PC
-  assign DataSrc = (op[3] && ~op[2]) ? 2'b00 :
-  				   PCS ? 2'b1x :
-				   		 2'b01;
+  //01 if data from PC
+  //10 if data from immediate
+  //11 if data from ALU
+  assign DataSrc = SW ? 2'b00 :
+  				   PCS ? 2'b01 :
+				   (LLB || LHB) ? 2'b10 :
+				   		 2'b11;
+  assign hlt = HLT;
+
 endmodule
