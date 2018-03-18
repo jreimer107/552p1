@@ -10,13 +10,12 @@
 * @out is a 1 bit signal which is 1 when the requested condition matches the
 *   current codes and 0 otherwise.
 */
-//TODO: Write a tb and test lol.
-module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, match);
+module CCodeEval(clk, rst, opcc, alu_out, alu_ovfl, cond_true);
   input clk, rst;
   input alu_ovfl;
-  input [15:0] instr;
+  input [6:0] opcc;
   input [15:0] alu_out;
-  output match;
+  output cond_true;
 
   localparam  ADD = 4'b0000;
   localparam  SUB = 4'b0001;
@@ -25,26 +24,53 @@ module CCodeEval(clk, rst, instr, alu_out, alu_ovfl, match);
   localparam  SRA = 4'b0101;
   localparam  ROR = 4'b0110;
 
+  localparam  ne = 3'b000;
+  localparam  eq = 3'b001;
+  localparam  gt = 3'b010;
+  localparam  lt = 3'b011;
+  localparam  ge = 3'b100;
+  localparam  le = 3'b101;
+  localparam  ov = 3'b110;
+  localparam  un = 3'b111;
+
   wire [3:0] opcode;  //Determines wether to write or read codes
-  wire [2:0] cc_Req;     //Requested code
-  assign opcode = instr[15:12];
-  assign cc_Req = instr[11:9];
+  wire [2:0] C;     //Requested code
+  assign opcode = opcc[6:3];
+  assign C = opcc[2:0];
 
-  wire [2:0] regWrite; //NVZ order (write enables)
-  assign regWrite = (opcode === ADD || opcode === SUB) ? 3'b111 :
-    (opcode === XOR || opcode === SLL || opcode === SRA || opcode === ROR) ? 3'b001 :
-      3'b000;
+  //Write Enables to FLAG register
+  wire [2:0] ccWrEn; //NVZ order
+  assign ccWrEn = (opcode === ADD || opcode === SUB) ? 3'b111 :
+	(opcode === XOR || opcode === SLL || opcode === SRA || opcode === ROR) ? 3'b001 :
+	  3'b000;
 
-  //regWrite will be 3'b000 if instruction relies on condition code
-  wire n, v, z; //dff inputs
-  wire [2:0] cc_Curr;
-  assign n = alu_out[15];
-  assign v = alu_ovfl;
-  assign z = ~|alu_out;
-  dff negative(.q(cc_Curr[2]), .d(n), .wen(regWrite[2]), .clk(clk), .rst(rst));
-  dff overflow(.q(cc_Curr[1]), .d(v), .wen(regWrite[1]), .clk(clk), .rst(rst));
-  dff zero(.q(cc_Curr[0]), .d(z), .wen(regWrite[0]), .clk(clk), .rst(rst));
+  //Input/output data to/from FLAG register
+  wire [2:0] flag_in, F;
+  assign flag_in = {alu_out[15], alu_ovfl, ~|alu_out};
+  flag_reg FLAG(.clk(clk), .rst(rst), .D(flag_in), .WriteEn(ccWrEn), .F(F));
+  assign {N, V, Z} = F;
 
-  assign match = (cc_Req === cc_Curr);
+
+  //Evaluate condition
+  assign cond_true = (C == ne && ~Z			     ||
+					 C == eq && Z                ||
+					 C == gt && (~Z & ~N)        ||
+					 C == lt && N                ||
+					 C == ge && (Z | (~N & ~Z))  ||
+					 C == le && (N | Z)          ||
+					 C == ov && V                ||
+					 C == un)  ?
+					  1'b1 : 1'b0;
+
+endmodule
+
+module flag_reg(clk, rst, D, WriteEn, F);
+	input clk, rst;
+	input [2:0] D, WriteEn;
+	output [2:0] F;
+
+	dff negative(.q(F[2]), .d(D[2]), .wen(WriteEn[2]), .clk(clk), .rst(rst));
+	dff overflow(.q(F[1]), .d(D[1]), .wen(WriteEn[1]), .clk(clk), .rst(rst));
+	dff zero(.q(F[0]), .d(D[0]), .wen(WriteEn[0]), .clk(clk), .rst(rst));
 
 endmodule

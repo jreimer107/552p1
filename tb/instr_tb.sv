@@ -6,7 +6,7 @@ module instr_tb();
 
 	integer cycle_count;
 
-	cpu DUT(.clk(clk), .rst_n(rst_n), .pc_out(PC), .hlt(hlt), .mode(1'b1), .instr_in(instr));
+	cpu DUT(.clk(clk), .rst_n(rst_n), .pc_out(PC), .hlt(hlt), .mode(1'b0), .instr_in(instr));
 
 	always #5 clk = ~clk;
 
@@ -17,11 +17,13 @@ module instr_tb();
 	  		$display("hmm....more than 100000 cycles of simulation...error?\n");
 	  		$stop();
 		end
-		$strobe("WriteData: %x, MemWrite: %x", DUT.WriteData, DUT.MemWrite);
+		$strobe("PC: %x, Instr: %x, WriteData: %x, MemWrite: %x", DUT.pc,
+			DUT.instr, DUT.WriteData, DUT.MemWrite);
+		$stop(); //Stop for each instruction
 	end
 
-	
-	
+
+
 	initial begin
   	 	$dumpvars;
   	 	cycle_count = 0;
@@ -29,30 +31,21 @@ module instr_tb();
   	 	clk = 1;
   	 	#25 rst_n = 1; // delay until slightly after two clock periods
 
-		@(negedge clk) instr = 16'hB112; //LLB r1, 12
-		$stop();
-		@(negedge clk) instr = 16'hA134; //LHB r1, 34
-		//$stop();
-		@(negedge clk) instr = 16'hB2B0;
-		@(negedge clk) instr = 16'hA2A0;
-		
-		@(negedge clk) instr = 16'hB302;
-		@(negedge clk) instr = 16'hA300;
-		$stop();
-		@(negedge clk) instr = 16'h9122;
-		$stop();
-		@(negedge clk) instr = 16'h0523;
-		$stop();
-		@(negedge clk) instr = 16'h8450;
-		$stop();
-		@(negedge clk) instr = 16'h7542;
-		$stop();
-		@(negedge clk) instr = 16'h2555;
-		//$stop();
-		$stop();
-		@(negedge clk) instr = 16'hF000;
-		$stop();
+		@(negedge clk) instr = 16'hB102;
+		@(negedge clk) instr = 16'hA100; //R1 <- 0002
+		@(negedge clk) instr = 16'hB201;
+		@(negedge clk) instr = 16'hA200; //R2 <- 0001
+		@(negedge clk) instr = 16'hB604;
+		@(negedge clk) instr = 16'hA600; //R6 <- 0004
+		@(negedge clk) instr = 16'h1112; //R1 <- R1 - R2 = 0001
+		@(negedge clk) instr = 16'hE500; //R5 <- PC + 2
+		@(negedge clk) instr = 16'hC202; //BEQ b1 (not taken )
+		@(negedge clk) instr = 16'hD360; //BR R6 (0004)
+		@(negedge clk) instr = 16'hF000; //HLT
+		@(negedge clk) instr = 16'h0462; //R4 <- R6 + R2 = 0005
+		@(negedge clk) instr = 16'hF000; //HLT
+		@(negedge clk) instr = 16'h1462; //R4 <- R6 - R2 = 0003
+		@(negedge clk) instr = 16'hF000; //HLT
 		@(negedge clk);
-		$stop();
 	 end
 endmodule

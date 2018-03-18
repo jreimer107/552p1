@@ -1,15 +1,15 @@
-	LLB R1, 0X02
-	LHB R1, 0X00
-	LLB R2, 0X01
-	LHB R2, 0X00
-	LLB R6, 0x04
-	LHB R6, 0x00
-	SUB R1, R1, R2
-	PCS R5
-	B 001, b1
-	BR 111, R6
-	HLT
-b1:	ADD R4, R6, R2
-	HLT
-	SUB R4, R6, R2
-	HLT
+	LLB R1, 0X02		//00
+	LHB R1, 0X00		//02
+	LLB R2, 0X01		//04
+	LHB R2, 0X00		//06
+	LLB R6, 0x04		//08
+	LHB R6, 0x00		//0A
+	SUB R1, R1, R2		//0C
+	PCS R5				//0E
+	B 001, b1			//10
+	BR 111, R6			//12
+	HLT					//14
+b1:	ADD R4, R6, R2		//16
+	HLT					//18
+	SUB R4, R6, R2		//1A
+	HLT					//1C

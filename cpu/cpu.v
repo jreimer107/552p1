@@ -14,8 +14,8 @@ module cpu(clk, rst_n, pc_out, hlt, instr_in, mode);
 	wire [15:0] WriteData;
 
 ///////////////////////////IF//////////////////////////////////////////////////
-	wire [15:0] pc_in, instr_fetch, instr;
-	fetch IF(.clk(clk), .rst(rst), .pc_in(pc_in), .pc_out(pc_out), .instr(instr_fetch), .hlt(hlt));
+	wire [15:0] pc, instr_fetch, instr;
+	fetch IF(.clk(clk), .rst(rst), .pc_next(pc_out), .pc(pc), .instr(instr_fetch));
 
 	//Testing wiring//
 	assign instr = mode ? instr_in : instr_fetch;
@@ -32,18 +32,19 @@ module cpu(clk, rst_n, pc_out, hlt, instr_in, mode);
 		.RegSrc(RegSrc), .RegWrite(RegWrite), .WriteData(WriteData), .imm(imm),
 		.RegData1(RegData1), .RegData2(RegData2));
 /////////////////////////////////EX////////////////////////////////////////////
-	wire match;
-	wire [15:0] alu_out, branch_dest;
-	execute EX(.instr(instr), .ALUSrc(ALUSrc), .imm(imm), .RegData1(RegData1),
-		.RegData2(RegData2), .pc_out(pc_out), .match(match), .alu_out(alu_out),
-		.branch_dest(branch_dest));
+	wire cond_true;
+	wire [15:0] alu_out;
+	execute EX(.clk(clk), .rst(rst), .instr(instr), .ALUSrc(ALUSrc), .imm(imm),
+		.RegData1(RegData1), .RegData2(RegData2), .alu_out(alu_out),
+		.cond_true(cond_true));
+
+	PC_control PCC(.cond_true(cond_true), .imm(imm), .RegData1(RegData1),
+		.BranchSrc(BranchSrc), .hlt(hlt), .pc(pc), .pc_next(pc_out));
 //////////////////////////////////////MEM///////////////////////////////////////
   	wire [15:0] mem_out;
   	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out), .RegData2(RegData2),
 	 .MemOp(MemOp), .MemWrite(MemWrite), .mem_out(mem_out));
 /////////////////////////////////////WB/////////////////////////////////////////
-	writeback WB(.pc_out(pc_out), .alu_out(alu_out), .mem_out(mem_out), .imm(imm),
-		.branch_dest(branch_dest), .RegData2(RegData2), .DataSrc(DataSrc),
-		.BranchSrc(BranchSrc), .match(match), .WriteData(WriteData),
-		.pc_in(pc_in));
+	writeback WB(.alu_out(alu_out), .mem_out(mem_out), .imm(imm),
+		.pc_next(pc_out), .DataSrc(DataSrc), .WriteData(WriteData));
 endmodule

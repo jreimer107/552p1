@@ -120,7 +120,8 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, ImmSize,
   //BRANCHSRC//
   //If B, immediate used.
   //If BR, slot 2 data used.
-  //Else pc_inc used.
+  //If PCS, pc + 2 used.
+  //If HLT, pc used.
   //0 for use pc_inc
   //1 for use immediate
   //2 for use RegData2.
