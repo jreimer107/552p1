@@ -17,10 +17,10 @@
 * @output BranchSrc determines whether the next instruction address is taken
 *	from pc_out, RegData2, or the supplied immediate.
 */
-module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
+module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, ImmSize,
 	BranchSrc, DataSrc, hlt);
   input [3:0] op;
-  output RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, hlt;
+  output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, hlt;
   output [1:0] ImmSize, DataSrc, BranchSrc;
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
@@ -95,7 +95,7 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
   assign RegSrc = SW || LLB || LHB;
 
   //MEMREAD//
-  assign MemRead = LW;
+  assign MemOp = LW | SW;
   assign MemWrite = SW;
 
   //ALUSrc//
@@ -133,7 +133,7 @@ module Control(op, RegSrc, RegWrite, MemRead, MemWrite, ALUSrc, ImmSize,
   //01 if data from PC
   //10 if data from immediate
   //11 if data from ALU
-  assign DataSrc = SW ? 2'b00 :
+  assign DataSrc = LW ? 2'b00 :
   				   PCS ? 2'b01 :
 				   (LLB || LHB) ? 2'b10 :
 				   		 2'b11;

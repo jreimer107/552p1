@@ -17,7 +17,7 @@ module instr_tb();
 	  		$display("hmm....more than 100000 cycles of simulation...error?\n");
 	  		$stop();
 		end
-		$strobe("%x", DUT.WriteData);
+		$strobe("WriteData: %x, MemWrite: %x", DUT.WriteData, DUT.MemWrite);
 	end
 
 	
@@ -30,12 +30,28 @@ module instr_tb();
   	 	#25 rst_n = 1; // delay until slightly after two clock periods
 
 		@(negedge clk) instr = 16'hB112; //LLB r1, 12
-		//$stop();
+		$stop();
 		@(negedge clk) instr = 16'hA134; //LHB r1, 34
 		//$stop();
 		@(negedge clk) instr = 16'hB2B0;
 		@(negedge clk) instr = 16'hA2A0;
-		@(negedge clk) instr = 16'h0321;
+		
+		@(negedge clk) instr = 16'hB302;
+		@(negedge clk) instr = 16'hA300;
+		$stop();
+		@(negedge clk) instr = 16'h9122;
+		$stop();
+		@(negedge clk) instr = 16'h0523;
+		$stop();
+		@(negedge clk) instr = 16'h8450;
+		$stop();
+		@(negedge clk) instr = 16'h7542;
+		$stop();
+		@(negedge clk) instr = 16'h2555;
+		//$stop();
+		$stop();
+		@(negedge clk) instr = 16'hF000;
+		$stop();
 		@(negedge clk);
 		$stop();
 	 end

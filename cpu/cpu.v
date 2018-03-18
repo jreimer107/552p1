@@ -15,15 +15,15 @@ module cpu(clk, rst_n, pc_out, hlt, instr_in, mode);
 
 ///////////////////////////IF//////////////////////////////////////////////////
 	wire [15:0] pc_in, instr_fetch, instr;
-	fetch IF(.clk(clk), .rst(rst), .pc_in(pc_in), .pc_out(pc_out), .instr(instr_fetch));
+	fetch IF(.clk(clk), .rst(rst), .pc_in(pc_in), .pc_out(pc_out), .instr(instr_fetch), .hlt(hlt));
 
 	//Testing wiring//
 	assign instr = mode ? instr_in : instr_fetch;
 	//////////////
 
-	wire RegSrc, RegWrite, MemRead, MemWrite, ALUSrc;
+	wire RegSrc, RegWrite, MemOp, MemWrite, ALUSrc;
 	wire [1:0] ImmSize, BranchSrc, DataSrc;
- 	Control ctrl(.op(instr[15:12]), .RegSrc(RegSrc), .MemRead(MemRead),
+ 	Control ctrl(.op(instr[15:12]), .RegSrc(RegSrc), .MemOp(MemOp),
   		.MemWrite(MemWrite), .ALUSrc(ALUSrc), .RegWrite(RegWrite), .hlt(hlt),
 		.ImmSize(ImmSize), .BranchSrc(BranchSrc), .DataSrc(DataSrc));
 //////////////////////////////////ID///////////////////////////////////////////
@@ -40,7 +40,7 @@ module cpu(clk, rst_n, pc_out, hlt, instr_in, mode);
 //////////////////////////////////////MEM///////////////////////////////////////
   	wire [15:0] mem_out;
   	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out), .RegData2(RegData2),
-	 .MemRead(MemRead), .MemWrite(MemWrite), .mem_out(mem_out));
+	 .MemOp(MemOp), .MemWrite(MemWrite), .mem_out(mem_out));
 /////////////////////////////////////WB/////////////////////////////////////////
 	writeback WB(.pc_out(pc_out), .alu_out(alu_out), .mem_out(mem_out), .imm(imm),
 		.branch_dest(branch_dest), .RegData2(RegData2), .DataSrc(DataSrc),

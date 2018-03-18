@@ -41,7 +41,7 @@ module ALU(A, B, op, ovfl, out);
   //////////////////////////////////////////////////////////////////////////////
 
   //Shifter
-  Shifter shift(.Shift_In(A), .Shift_Val(B[3:0]), .Mode(op[2:1]), .Shift_Out(out_shift));
+  Shifter shift(.Shift_In(A), .Shift_Val(B[3:0]), .Mode(op[1:0]), .Shift_Out(out_shift));
 
   //XOR
   assign out_xor = A ^ B;

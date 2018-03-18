@@ -20,7 +20,7 @@ module RegisterFile(clk, rst, SrcReg1, SrcReg2, DstReg, WriteReg, DstData, SrcDa
 	ReadDecoder_4_16 reader2(.RegId(SrcReg2), .Wordline(readline2));
 	
 	//Registers
-	Register reg0(.clk(clk), .rst(rst), .D(DstData), .WriteReg(writeline[0]), .ReadEnable1(readline1[0]), .ReadEnable2(readline2[0]), .Bitline1(readFromReg1), .Bitline2(readFromReg2));
+	Register reg0(.clk(clk), .rst(rst), .D(DstData), .WriteReg(1'b0), .ReadEnable1(readline1[0]), .ReadEnable2(readline2[0]), .Bitline1(readFromReg1), .Bitline2(readFromReg2));
 	Register reg1(.clk(clk), .rst(rst), .D(DstData), .WriteReg(writeline[1]), .ReadEnable1(readline1[1]), .ReadEnable2(readline2[1]), .Bitline1(readFromReg1), .Bitline2(readFromReg2));
 	Register reg2(.clk(clk), .rst(rst), .D(DstData), .WriteReg(writeline[2]), .ReadEnable1(readline1[2]), .ReadEnable2(readline2[2]), .Bitline1(readFromReg1), .Bitline2(readFromReg2));
 	Register reg3(.clk(clk), .rst(rst), .D(DstData), .WriteReg(writeline[3]), .ReadEnable1(readline1[3]), .ReadEnable2(readline2[3]), .Bitline1(readFromReg1), .Bitline2(readFromReg2));

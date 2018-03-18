@@ -18,23 +18,27 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
     else shift0 = {Shift_In[0], Shift_In[15:1]};
   end
   */
-//  assign shift0 = Shift_Val[0] ? (SLL ? {Shift_In[14:0], 1'b0} :
-//                                  SRA ? {Shift_In[15], Shift_In[15:1]} :
-//                                        {Shift_In[0], Shift_In[15:1]});
+ assign shift0 = Shift_Val[0] ? (SLL ? {Shift_In[14:0], 1'b0} :
+                                 SRA ? {Shift_In[15], Shift_In[15:1]} :
+                                       {Shift_In[0], Shift_In[15:1]}) :
+									   Shift_In;
 
-//  assign shift1 = Shift_Val[1] ? (SLL ? {shift0[13:0], 2'h0} :
-//                                  SRA ? {{2{shift0[15]}}, shift0[15:2]} :
-//                                        {shift0[0:1], shift0[15:2]}); //Does this reverse the order?
+ assign shift1 = Shift_Val[1] ? (SLL ? {shift0[13:0], 2'h0} :
+                                 SRA ? {{2{shift0[15]}}, shift0[15:2]} :
+                                       {shift0[1:0], shift0[15:2]}) :
+									   shift0;
 
-//  assign shift2 = Shift_Val[2] ? (SLL ? {shift1[11:0], 4'h0} :
-//                                  SRA ? {{4{shift1[15]}}, shift1[15:4]} :
-//                                        {shift1[0:3], shift1[15:4]});
+ assign shift2 = Shift_Val[2] ? (SLL ? {shift1[11:0], 4'h0} :
+                                 SRA ? {{4{shift1[15]}}, shift1[15:4]} :
+                                       {shift1[3:0], shift1[15:4]}) :
+									   shift1;
 
-//  assign Shift_Out = Shift_Val[3] ? (SLL ? {shift2[7:0], 8'h0} :
-//                                  SRA ? {{8{shift0[15]}}, shift1[15:8]} :
-//                                        {shift0[0:7], shift0[15:8]});
+ assign Shift_Out = Shift_Val[3] ? (SLL ? {shift2[7:0], 8'h0} :
+                                 SRA ? {{8{shift2[15]}}, shift2[15:8]} :
+                                       {shift2[7:0], shift2[15:8]}) :
+									   shift2;
 
-  assign shift0 = 
+/*   assign shift0 = 
     Shift_Val[0] ?
       SLL ?
         {Shift_In[14:0], 1'b0} :
@@ -78,6 +82,6 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
       shift2
     : shift2;
 
-
+ */
 
 endmodule
