@@ -32,7 +32,7 @@ module PC_control(cond_true, imm, RegData1, BranchSrc, hlt, pc, pc_next);
 	CLA_16bit inc(.A(pc), .B(inc_amount), .sub(1'b0), .S(intermediate), .red(1'b0), .sat(1'b0), .ovfl());
 	CLA_16bit imadder(.A(intermediate), .B(addend), .sub(1'b0), .S(pc_noBR), .red(1'b0), .sat(1'b0), .ovfl());
 
-	//Finally if BR, check for condition true and set pc to RegData2 if so.
+	//Finally if BR, check for condition true and set pc to RegData1 if so.
 	assign pc_next = (BranchSrc[1] & cond_true) ? RegData1 : pc_noBR;
 
 endmodule

@@ -29,8 +29,8 @@ module cpu(clk, rst_n, pc_out, hlt, instr_in, mode);
 //////////////////////////////////ID///////////////////////////////////////////
 	wire [15:0] imm, RegData1, RegData2;
   	decode ID(.clk(clk), .rst(rst), .instr(instr), .ImmSize(ImmSize),
-		.RegSrc(RegSrc), .RegWrite(RegWrite), .WriteData(WriteData), .imm(imm),
-		.RegData1(RegData1), .RegData2(RegData2));
+		.RegSrc(RegSrc), .RegWrite(RegWrite), .MemOp(MemOp), .WriteData(WriteData), 
+		.imm(imm), .RegData1(RegData1), .RegData2(RegData2));
 /////////////////////////////////EX////////////////////////////////////////////
 	wire cond_true;
 	wire [15:0] alu_out;

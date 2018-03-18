@@ -19,9 +19,9 @@ module instr_tb();
 		end
 		$strobe("PC: %x, Instr: %x, WriteData: %x, MemWrite: %x", DUT.pc,
 			DUT.instr, DUT.WriteData, DUT.MemWrite);
-		$stop(); //Stop for each instruction
 	end
 
+	always @(negedge clk) $stop();
 
 
 	initial begin
