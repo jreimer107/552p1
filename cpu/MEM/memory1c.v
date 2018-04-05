@@ -52,7 +52,7 @@ module memory1c (data_out, data_in, addr, enable, wr, clk, rst);
       if (rst) begin
          //load loadfile_all.img
          if (!loaded) begin
-            $readmemh("test_cases/test3.o", mem);
+            $readmemh("test_cases/test2.o", mem);
             loaded = 1;
          end
 

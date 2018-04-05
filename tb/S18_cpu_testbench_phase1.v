@@ -26,7 +26,7 @@ module cpu_tb();
 
 
 
-   cpu DUT(.clk(clk), .rst_n(rst_n), .pc_out(PC), .hlt(Halt)); /* Instantiate your processor */
+   cpu DUT(.clk(clk), .rst_n(rst_n), .pc(PC), .hlt(Halt)); /* Instantiate your processor */
 
 
 
@@ -165,7 +165,7 @@ module cpu_tb();
    assign WriteData = DUT.ID.WriteData;
    // Data being written to the register. (16 bits)
 
-   assign MemRead =  DUT.MemRead;
+   assign MemRead =  DUT.MemOp;
    // Is memory being read, one bit signal (1 means yes, 0 means no)
 
    assign MemWrite = DUT.MemWrite;
