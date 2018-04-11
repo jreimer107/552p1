@@ -23,6 +23,7 @@ module cpu(clk, rst_n, pc, hlt);
     ///////////////// EX SIGNALS////////////////////////////////////
 	wire cond_true;
 	wire [15:0] instr_EX, pc_next_EX, alu_out_EX;
+	wire [2:0] NVZ;
 
 	//Forwarding Signals
 	wire [3:0] Rd_EX;
@@ -66,6 +67,8 @@ module cpu(clk, rst_n, pc, hlt);
 	Control ctrl(.op(instr_ID[15:12]), .RegSrc(RegSrc_ID), .MemOp(MemOp_ID),
 		.MemWrite(MemWrite_ID), .ALUSrc(ALUSrc_ID), .RegWrite(RegWrite_ID), .hlt(hlt_ID),
 		.ImmSize(ImmSize_ID), .BranchSrc(BranchSrc_ID), .DataSrc(DataSrc_ID));
+
+	CCodeEval ccc(.C(instr_ID[11:8], .NVZ(NVZ), .cond_true(cond_true)));
 
 	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .ImmSize(ImmSize_ID),
 		.RegSrc(RegSrc_ID), .RegWrite(RegWrite_ID), .MemOp(MemOp_ID), .WriteData(WriteData),
