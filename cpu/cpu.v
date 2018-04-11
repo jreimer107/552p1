@@ -57,8 +57,8 @@ module cpu(clk, rst_n, pc, hlt);
 		.BranchSrc(BranchSrc), .hlt(hlt), .pc(pc), .pc_next(pc_next)); // TODO FIX THIS
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_IF_ID(.clk(clk), .rst(rst) .enable(/*TODO: hazard unit*/)
-		.signals_in({instr_IF, pc_next_IF})
+	PipelineReg plr_IF_ID(.clk(clk), .rst(rst), .enable(1'b1),
+		.signals_in({instr_IF, pc_next_IF}),
 		.signals_out({instr_ID, pc_next_ID})
 	);
 
@@ -72,9 +72,9 @@ module cpu(clk, rst_n, pc, hlt);
 		.imm(imm_ID), .RegData1(RegData1_ID), .RegData2(RegData2_ID));
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_ID_EX(.clk(clk), .rst(rst) .enable(/*TODO: hazard unit*/)
+	PipelineReg plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({instr_ID, pc_next_ID, DataSrc_ID, RegWrite_ID, RegData1_ID, RegData2_ID, ALUSrc_ID, 
-			imm_ID, MemOp_ID, MemWrite_ID})
+			imm_ID, MemOp_ID, MemWrite_ID}),
 		.signals_out({instr_EX, pc_next_EX, DataSrc_EX, RegWrite_EX, RegData1_EX, Regdata2_EX, ALUSrc_EX, 
 			imm_EX, MemOp_EX, MemWrite_EX})
 	);
@@ -92,9 +92,9 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_EX_MEM(.clk(clk), .rst(rst) .enable(/*TODO: hazard unit*/)
+	PipelineReg plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pc_next_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX, 
-			RegWrite_EX, instr_EX[11:8]})
+			RegWrite_EX, instr_EX[11:8]}),
 		.signals_out({pc_next_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM, 
 			RegWrite_MEM, Rd_MEM})
 	);
@@ -107,8 +107,8 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_MEM_WB(.clk(clk), .rst(rst) .enable(/*TODO: hazard unit*/)
-		.signals_in({alu_out_MEM, pc_next_MEM, mem_out_MEM, DataSrc_MEM, RegWrite_MEM, Rd_MEM})
+	PipelineReg plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
+		.signals_in({alu_out_MEM, pc_next_MEM, mem_out_MEM, DataSrc_MEM, RegWrite_MEM, Rd_MEM}),
 		.signals_out({alu_out_WB, pc_next_WB, mem_out_WB, DataSrc_WB, RegWrite_WB, Rd_WB})
 	);
 

@@ -15,7 +15,7 @@ module PipelineReg(clk, rst, enable, signals_in, signals_out);
 	dff ff06(signals_out[06], signals_in[06], enable, clk, rst);
 	dff ff07(signals_out[07], signals_in[07], enable, clk, rst);
 	dff ff08(signals_out[08], signals_in[08], enable, clk, rst);
-	dff ff19(signals_out[09], signals_in[09], enable, clk, rst);
+	dff ff09(signals_out[09], signals_in[09], enable, clk, rst);
 	dff ff10(signals_out[10], signals_in[10], enable, clk, rst);
 	dff ff11(signals_out[11], signals_in[11], enable, clk, rst);
 	dff ff12(signals_out[12], signals_in[12], enable, clk, rst);
