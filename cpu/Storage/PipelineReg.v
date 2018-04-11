@@ -76,5 +76,21 @@ module PipelineReg(clk, rst, enable, signals_in, signals_out);
 	dff ff67(signals_out[67], signals_in[67], enable, clk, rst);
 	dff ff68(signals_out[68], signals_in[68], enable, clk, rst);
 	dff ff69(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff70(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff71(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff72(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff73(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff74(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff75(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff76(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff77(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff78(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff79(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff80(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff81(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff82(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff83(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff84(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff85(signals_out[69], signals_in[69], enable, clk, rst);
 	// coulda did this way more easily and with fewer errors with a generate statement
 endmodule

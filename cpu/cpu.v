@@ -23,7 +23,7 @@ module cpu(clk, rst_n, pc, hlt);
 
     ///////////////// EX SIGNALS////////////////////////////////////
 	wire cond_true;
-	wire [15:0] instr_EX, pcs_EX, alu_out_EX, imm_EX;
+	wire [15:0] instr_EX, pcs_EX, alu_out_EX, imm_EX, RegData1_EX, RegData2_EX;
 	wire [2:0] NVZ;
 
 	//Forwarding Signals
@@ -43,7 +43,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire[1:0] DataSrc_MEM;
 
     //////////////////////////// WB SIGNALS///////////////////////////
-	wire [15:0] pcs_WB, mem_out_WB, imm_WB, WriteData;
+	wire [15:0] pcs_WB, alu_out_WB, mem_out_WB, imm_WB, WriteData;
 	wire [3:0] Rd_WB; //Forwarding
 
 	// control signals
@@ -75,7 +75,8 @@ module cpu(clk, rst_n, pc, hlt);
 	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .pc(pcs_ID),
 		.ImmSize(ImmSize), .RegSrc(RegSrc_ID), .RegWrite(RegWrite_WB),
 		.DstReg(Rd_WB), .WriteData(WriteData), .imm(imm_ID),
-		.RegData1(RegData1_ID), .RegData2(RegData2_ID));
+		.BranchSrc(BranchSrc), .RegData1(RegData1_ID), .RegData2(RegData2_ID),
+		.pc_branch(pc_branch));
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PipelineReg plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
@@ -89,8 +90,8 @@ module cpu(clk, rst_n, pc, hlt);
 
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .ALUSrc(ALUSrc_EX), .imm(imm_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
-		.cond_true(cond_true), .ForwardA(ForwardA), .ForwardB(ForwardB),
-		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData));
+		.ForwardA(ForwardA), .ForwardB(ForwardB),
+		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
 	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
 		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),

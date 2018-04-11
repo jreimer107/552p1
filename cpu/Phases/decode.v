@@ -1,6 +1,7 @@
-module decode(clk, rst, instr, pc, ImmSize, RegSrc, RegWrite, BranchSrc,
+module decode(clk, rst, instr, pc, DstReg, ImmSize, RegSrc, RegWrite, BranchSrc,
 	WriteData, imm, RegData1, RegData2, pc_branch);
 	input clk, rst;
+	input [3:0] DstReg;
 	input [15:0] instr, pc, WriteData;
 	input [1:0] ImmSize;
 	input RegSrc, RegWrite, BranchSrc;
@@ -11,7 +12,6 @@ module decode(clk, rst, instr, pc, ImmSize, RegSrc, RegWrite, BranchSrc,
 
 	assign SrcReg1 = instr[7:4];
 	assign SrcReg2 = RegSrc ? instr[11:8] : instr[3:0];
-	assign DstReg = instr[11:8];
 
 	/* ImmSize
 	* ImmSize is 00 for 4 bit immedates, sign extend to 16b
