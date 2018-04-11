@@ -6,9 +6,6 @@
 * @output zero signifies if the output is 0.
 * @output ovfl signifies if a CLA operation caused overflow.
 */
-
-//TODO: write a tb and test.
-
 module ALU(A, B, op, ovfl, out);
   input [15:0] A, B;
   input [3:0] op;
@@ -36,7 +33,7 @@ module ALU(A, B, op, ovfl, out);
   assign sub = (op == SUB);
   assign sat = (op == PADDSB);
   assign red = (op == RED);
-  CLA_16bit CLA(.A(A), .B(B_cla), .sub(sub), .ovfl(ovfl), .S(out_cla),
+  CLA_ALU16 CLA(.A(A), .B(B_cla), .sub(sub), .ovfl(ovfl), .S(out_cla),
   	.red(red), .sat(sat));
   //////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +46,7 @@ module ALU(A, B, op, ovfl, out);
   //output mux
   assign out = (op == XOR) ? out_xor :
                (op == PADDSB) ? out_cla :    //THIS FUCKER IS IN THE WRONG PLACE
-               (op[3:2] == 2'b01) ? out_shift :
+               (~op[3] & op[2]) ? out_shift :
                   out_cla;
 
 endmodule

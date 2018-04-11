@@ -1,6 +1,6 @@
 module fetch(clk, rst, pc_branch, branch, stop, instr, pcs);
 	input clk, rst;
-	input cond_true, stop;
+	input stop, branch;
 	input [15:0] pc_branch;
 	output [15:0] pcs, instr;
 
@@ -16,8 +16,7 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pcs);
 		.ReadEnable1(1'b1), .ReadEnable2(1'b0), .Bitline1(pc), .Bitline2());
 
 	//Makes pc_inc out of pc.
-	CLA_16bit incrementor(.A(increment), .B(pc), .sub(1'b0), .S(pc_inc),
-		.sat(1'b0), .red(1'b0), .ovfl());
+	CLA_16bit incrementor(.A(increment), .B(pc), .S(pc_inc));
 
 	//Gets instruction stored at pc.
 	memory1c Imem(.data_out(instr), .data_in(), .addr(pc), .enable(1'b1),

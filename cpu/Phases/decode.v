@@ -4,9 +4,10 @@ module decode(clk, rst, instr, pc, ImmSize, RegSrc, RegWrite, BranchSrc,
 	input [15:0] instr, pc, WriteData;
 	input [1:0] ImmSize;
 	input RegSrc, RegWrite, BranchSrc;
-	output [15:0] imm, RegData1, RegData2;
+	output [15:0] imm, RegData1, RegData2, pc_branch;
 
 	wire [3:0] SrcReg1, SrcReg2, DstReg;
+	wire [15:0] branch_imm;
 
 	assign SrcReg1 = instr[7:4];
 	assign SrcReg2 = RegSrc ? instr[11:8] : instr[3:0];
@@ -27,8 +28,7 @@ module decode(clk, rst, instr, pc, ImmSize, RegSrc, RegWrite, BranchSrc,
 	assign pc_branch = BranchSrc ? RegData1 : branch_imm;
 
 	//Adds shifted imm and pc for Branch instructions.
-	CLA_16bit branchaddr(.A(pc), .B(imm << 1), .sub(1'b0), .sat(1'b0),
-		.red(1'b0), .ovfl(), .S(branch_imm));
+	CLA_16bit branchaddr(.A(pc), .B(imm << 1), .S(branch_imm));
 
 	RegisterFile Regs(.clk(clk), .rst(rst), .SrcReg1(SrcReg1),
 		.SrcReg2(SrcReg2), .DstReg(DstReg), .WriteReg(RegWrite),

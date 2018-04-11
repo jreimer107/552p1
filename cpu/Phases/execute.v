@@ -40,7 +40,7 @@ module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out,
 	ALU alu(.A(ALUA), .B(ALUB), .op(instr[15:12]), .out(alu_out),
 		.ovfl(alu_ovfl));
 
-	flag_reg FLAG(.clk(clk), .rst(rst), .opcode(instr[15:12]), .alu_ovfl(alu_ovfl)
-		.alu_out(alu_out), .NVZ(NVZ));
+	flag_reg FLAG(.clk(clk), .rst(rst), .opcode(instr[15:12]),
+		.alu_ovfl(alu_ovfl), .alu_out(alu_out), .NVZ(NVZ));
 
 endmodule
