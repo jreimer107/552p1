@@ -8,5 +8,4 @@ module writeback(alu_out, mem_out, imm, pc_next, DataSrc, WriteData);
 					   (DataSrc == 2'b10) ? imm :
 											alu_out; //May need to be current pc
 
-	//always @(WriteData);
 endmodule

@@ -1,12 +1,12 @@
-module decode(clk, rst, instr, ImmSize, RegSrc, RegWrite, MemOp, WriteData, imm, RegData1, RegData2);
+module decode(clk, rst, instr, pc, ImmSize, RegSrc, RegWrite, BranchSrc,
+	WriteData, imm, RegData1, RegData2, pc_branch);
 	input clk, rst;
-	input [15:0] instr, WriteData;
+	input [15:0] instr, pc, WriteData;
 	input [1:0] ImmSize;
-	input RegSrc, RegWrite, MemOp;
+	input RegSrc, RegWrite, BranchSrc;
 	output [15:0] imm, RegData1, RegData2;
 
 	wire [3:0] SrcReg1, SrcReg2, DstReg;
-	wire [15:0] imm_internal;
 
 	assign SrcReg1 = instr[7:4];
 	assign SrcReg2 = RegSrc ? instr[11:8] : instr[3:0];
@@ -18,15 +18,17 @@ module decode(clk, rst, instr, ImmSize, RegSrc, RegWrite, MemOp, WriteData, imm,
 	* 10 for LLB, arrange to be lower byte
 	* 11 for LHB, arrange to be higher byte.
 	*/
-	assign imm_internal = (ImmSize == 2'b00) ? {{12{instr[3]}}, instr[3:0]} :
-						  (ImmSize == 2'b01) ? {{7{instr[8]}}, instr[8:0]} :
-						  (ImmSize == 2'b10) ? {RegData2[15:8], instr[7:0]} :
-							/*2'b11*/		   {instr[7:0], RegData2[7:0]};
+	assign imm = (ImmSize == 2'b00) ? {{12{instr[3]}}, instr[3:0]} :
+				 (ImmSize == 2'b01) ? {{7{instr[8]}}, instr[8:0]} :
+				 (ImmSize == 2'b10) ? {RegData2[15:8], instr[7:0]} :
+				  /*2'b11*/			  {instr[7:0], RegData2[7:0]};
 
+	//Decides between branch targets for B vs BR instrs
+	assign pc_branch = BranchSrc ? RegData1 : branch_imm;
 
-	//Shift immediate for memory operation
-	assign imm = MemOp ? (imm_internal << 1) : imm_internal;
-				  
+	//Adds shifted imm and pc for Branch instructions.
+	CLA_16bit branchaddr(.A(pc), .B(imm << 1), .sub(1'b0), .sat(1'b0),
+		.red(1'b0), .ovfl(), .S(branch_imm));
 
 	RegisterFile Regs(.clk(clk), .rst(rst), .SrcReg1(SrcReg1),
 		.SrcReg2(SrcReg2), .DstReg(DstReg), .WriteReg(RegWrite),
