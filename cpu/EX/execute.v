@@ -11,21 +11,36 @@
 * @output cond_true is 1 when the condition given in the instruction matches the
 * 	values in the flag register.
 */
-module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out, cond_true);
+module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out, cond_true,
+		ForwardA, ForwardB, alu_out_MEM, WriteData);
 	input clk, rst;
 	input [15:0] instr, imm, RegData1, RegData2;
 	input ALUSrc;
+
+	//Forwarding inputs
+	input [1:0] ForwardA, ForwardB;
+	input [15:0] alu_out_MEM, WriteData;
+
 	output [15:0] alu_out;
 	output cond_true;
 
-	wire [15:0] alu_in;
+	wire [15:0] alu_in, ALUA, ALUB;
 	wire alu_ovfl;
 
 	assign alu_in = ALUSrc ? imm : RegData2;
+	assign ALUA = (ForwardA == 2'b00) ? RegData1 :
+				  (ForwardA == 2'b01) ? WriteData :
+				  						alu_out_MEM;
 
-	ALU alu(.A(RegData1), .B(alu_in), .op(instr[15:12]), .out(alu_out),
+	assign ALUB = (ForwardB == 2'b00) ? alu_in :
+				  (ForwardB == 2'b01) ? WriteData :
+				  						alu_out_MEM;
+
+
+	ALU alu(.A(ALUA), .B(ALUB), .op(instr[15:12]), .out(alu_out),
 		.ovfl(alu_ovfl));
 
 	CCodeEval eval(.clk(clk), .rst(rst), .opcc(instr[15:9]), .alu_out(alu_out),
 		.alu_ovfl(alu_ovfl), .cond_true(cond_true));
+
 endmodule

@@ -62,12 +62,12 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, ImmSize,
   //LW/SW:      opcode  rt,     rs,     offset
   //            10aa    tttt    ssss    oooo
   //LW:                 wr      rd1     imm
-  //SW:					rd2		rd1		imm
+  //SW:					        rd2		  rd1		  imm
 
   //LHB/SHB:    opcode  rd,     imm
   //            101a    dddd    uuuu   uuuu
-  //LHB:				wr		imm
-  //LLB:				wr		imm
+  //LHB:				        wr		imm
+  //LLB:				        wr		imm
 
   //B:          B,      cond,   label
   //            opcode  ccci    iiii   iiii

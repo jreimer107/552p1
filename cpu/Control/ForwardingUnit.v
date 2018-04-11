@@ -21,12 +21,6 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 	* 3. MEM/WB.WriteReg = ID/EX.ReadReg1
 	* 4. MEM/WB.WriteReg = ID/EX.ReadReg2
 	*/
-	wire exmemfw1, exmemfw2, memwbfw1, memwbfw2;
-	assign exmemfw1 = (exmemWR == idexRR1);
-	assign exmemfw2 = (exmemWR == idexRR2);
-	assign memwbfw1 = (memwbWR == idexRR1);
-	assign memwbfw2 = (memwbWR == idexRR2);
-
 
 	//EX HAZARD
 	wire ExHazard1, ExHazard2;
@@ -41,8 +35,8 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 
 	/* Forward A: whether ALUin1 needs to be forwarded
 	* 00 if no conditions true, no forwarding needed
-	* 01 if ExHazard1 true, forwarding from EX/MEM.ALUOut needed
-	* 1x if MemHazard1 true, forwarding from MEM/WB.WriteData needed
+	* 1x if ExHazard1 true, forwarding from EX/MEM.ALUOut needed
+	* 01 if MemHazard1 true, forwarding from MEM/WB.WriteData needed
 	*/
 	assign ForwardA = ExHazard1  ? 2'b1x :
 					  MemHazard1 ? 2'b01 :
@@ -51,8 +45,8 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 
  	/* Forward B: whether ALUin2 needs to be forwarded
 	* 00 if no conditions true, no forwarding needed
-	* 01 if ExHazard2 true, forwarding from EX/MEM.ALUOut needed
-	* 1x if MemHazard2 true, forwarding from MEM/WB.WriteData needed
+	* 1x if ExHazard2 true, forwarding from EX/MEM.ALUOut needed
+	* 01 if MemHazard2 true, forwarding from MEM/WB.WriteData needed
 	*/
 	assign ForwardB = ExHazard2  ? 2'b1x :
 					  MemHazard2 ? 2'b01 :
