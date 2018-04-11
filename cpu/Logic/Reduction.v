@@ -20,12 +20,11 @@ module Reduction(s0, s1, s2, s3, g0, g1, g2, g3, S_red);
   assign G[3:0] = {g3, g2, g1, g0}; //Organize inputs for wallace tree
 
   //Medium level two CLAs
-  CLA_4bit cla4(.A(s0), .B(s1), .c0(1'b0), .S(s4), .G(G[4]), .P(), .sat(1'b0), .red(1'b0));
-  CLA_4bit cla5(.A(s3), .B(s2), .c0(1'b0), .S(s5), .G(G[5]), .P(), .sat(1'b0), .red(1'b0));
+  CLA_4bit cla4(.A(s0), .B(s1), .c0(1'b0), .S(s4), .G(G[4]), .P());
+  CLA_4bit cla5(.A(s3), .B(s2), .c0(1'b0), .S(s5), .G(G[5]), .P());
 
   //High level CLA, gets lower 4 bits of S_red
-  CLA_4bit cla6(.A(s5), .B(s4), .c0(1'b0), .S(S_red[3:0]), .G(G[6]), .P(),
-    .sat(1'b0), .red(1'b0));
+  CLA_4bit cla6(.A(s5), .B(s4), .c0(1'b0), .S(S_red[3:0]), .G(G[6]), .P());
 
   //Gets bits 6:4 of S_red
   Wallace tree(.in(G), .out(S_red[6:4]));

@@ -6,3 +6,6 @@ work/
 *.log
 *.trace
 *.vcd
+*.wlf
+*.zip
+*.bak

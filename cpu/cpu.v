@@ -9,20 +9,22 @@ module cpu(clk, rst_n, pc, hlt);
     assign rst = ~rst_n;
 
     /////////////////////////// IF SIGNALS/////////////////////////////
-	wire [15:0] instr_IF, pc_next_IF;
+	wire [15:0] instr_IF, pcs_IF;
 
     ///////////////////////// ID SIGNALS/////////////////////////////
-	wire [15:0] instr_ID, pc_next_ID;
-	wire [15:0] RegData1_ID, RegData2_ID;
+	wire [15:0] instr_ID, pc_branch, pcs_ID;
+	wire [15:0] RegData1_ID, RegData2_ID, imm_ID;
+	wire bubble;
 
 	// control signals
-	wire RegSrc_ID, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID;
-	wire [1:0] ImmSize_ID, BranchSrc_ID, DataSrc_ID;
-	wire [15:0] imm_ID;
+	wire RegSrc_ID, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
+		Branch, BranchSrc;
+	wire [1:0] ImmSize, DataSrc_ID;
 
     ///////////////// EX SIGNALS////////////////////////////////////
 	wire cond_true;
-	wire [15:0] instr_EX, pc_next_EX, alu_out_EX;
+	wire [15:0] instr_EX, pcs_EX, alu_out_EX, imm_EX, RegData1_EX, RegData2_EX;
+	wire [2:0] NVZ;
 
 	//Forwarding Signals
 	wire [1:0] ForwardA, ForwardB;
@@ -32,7 +34,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire[1:0] DataSrc_EX;
 
     ///////////////// MEM SIGNALS//////////////////////////////////////
-	wire [15:0] pc_next_MEM, alu_out_MEM, RegData2_MEM, mem_out_MEM;
+	wire [15:0] pcs_MEM, alu_out_MEM, RegData2_MEM, mem_out_MEM, imm_MEM;
 	wire [3:0] Rd_MEM; //Forwarding
 
 	// control signals
@@ -40,7 +42,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire[1:0] DataSrc_MEM;
 
     //////////////////////////// WB SIGNALS///////////////////////////
-	wire [15:0] pc_next_WB, mem_out_WB, WriteData;
+	wire [15:0] pcs_WB, alu_out_WB, mem_out_WB, imm_WB, WriteData;
 	wire [3:0] Rd_WB; //Forwarding
 
 	// control signals
@@ -89,57 +91,63 @@ module cpu(clk, rst_n, pc, hlt);
 		1'b0;
 	
 		
-	wire NOP_mux;
-	assign NOP_mux = insert_bubble ? 16'h0000 : instr_IF;
+	wire NOP_or_instr_IF
+	assign NOP_or_instr_IF = insert_bubble ? 16'h0000 : instr_IF;
 
 
 ///////////////////////////////////////IF///////////////////////////////////////
-	fetch IF(.clk(clk), .rst(rst), .pc_next(pc_next_IF), .pc(pc), .instr(instr_IF));
+	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
+		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
+		.pcs(pcs_IF));
 
-	PC_control PCC(.cond_true(cond_true), .imm(imm), .RegData1(RegData1),
-		.BranchSrc(BranchSrc), .hlt(hlt), .pc(pc), .pc_next(pc_next)); // TODO FIX THIS
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_IF_ID(.clk(clk), .rst(rst), .enable(1'b1),
-		.signals_in({NOP_mux, pc_next_IF}),
-		.signals_out({instr_ID, pc_next_ID})
-	);
+
+	PLR_IFID plr_IF_ID(.clk(clk), .rst(rst), .enable(1'b1),
+		.signals_in({NOP_or_instr_IF, pcs_IF}),
+		.signals_out({instr_ID, pcs_ID})
+
 
 ///////////////////////////////////////ID///////////////////////////////////////
 	Control ctrl(.op(instr_ID[15:12]), .RegSrc(RegSrc_ID), .MemOp(MemOp_ID),
-		.MemWrite(MemWrite_ID), .ALUSrc(ALUSrc_ID), .RegWrite(RegWrite_ID), .hlt(hlt_ID),
-		.ImmSize(ImmSize_ID), .BranchSrc(BranchSrc_ID), .DataSrc(DataSrc_ID));
+		.MemWrite(MemWrite_ID), .ALUSrc(ALUSrc_ID), .RegWrite(RegWrite_ID),
+		.hlt(hlt_ID), .ImmSize(ImmSize), .BranchSrc(BranchSrc),
+		.Branch(Branch), .DataSrc(DataSrc_ID));
 
-	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .ImmSize(ImmSize_ID),
-		.RegSrc(RegSrc_ID), .RegWrite(RegWrite_ID), .MemOp(MemOp_ID), .WriteData(WriteData),
-		.imm(imm_ID), .RegData1(RegData1_ID), .RegData2(RegData2_ID));
+	CCodeEval ccc(.C(instr_ID[11:9]), .NVZ(NVZ), .cond_true(cond_true));
+
+	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .pc(pcs_ID),
+		.ImmSize(ImmSize), .RegSrc(RegSrc_ID), .RegWrite(RegWrite_WB),
+		.DstReg(Rd_WB), .WriteData(WriteData), .imm(imm_ID),
+		.BranchSrc(BranchSrc), .RegData1(RegData1_ID), .RegData2(RegData2_ID),
+		.pc_branch(pc_branch));
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
-		.signals_in({instr_ID, pc_next_ID, DataSrc_ID, RegWrite_ID, RegData1_ID, RegData2_ID, ALUSrc_ID, 
-			imm_ID, MemOp_ID, MemWrite_ID}),
-		.signals_out({instr_EX, pc_next_EX, DataSrc_EX, RegWrite_EX, RegData1_EX, Regdata2_EX, ALUSrc_EX, 
-			imm_EX, MemOp_EX, MemWrite_EX})
+	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
+		.signals_in({instr_ID, pcs_ID, DataSrc_ID, RegWrite_ID, RegData1_ID,
+			RegData2_ID, ALUSrc_ID, imm_ID, MemOp_ID, MemWrite_ID}),
+		.signals_out({instr_EX, pcs_EX, DataSrc_EX, RegWrite_EX, RegData1_EX,
+			RegData2_EX, ALUSrc_EX, imm_EX, MemOp_EX, MemWrite_EX})
 	);
 
 ///////////////////////////////////////EX///////////////////////////////////////
 
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .ALUSrc(ALUSrc_EX), .imm(imm_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
-		.cond_true(cond_true), .ForwardA(ForwardA), .ForwardB(ForwardB), 
-		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData));
+		.ForwardA(ForwardA), .ForwardB(ForwardB),
+		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
-	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]), 
+	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
 		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
 		.ForwardA(ForwardA), .ForwardB(ForwardB));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PipelineReg plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
-		.signals_in({pc_next_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX, 
-			RegWrite_EX, instr_EX[11:8]}),
-		.signals_out({pc_next_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM, 
-			RegWrite_MEM, Rd_MEM})
+		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
+			RegWrite_EX, instr_EX[11:8], imm_EX}),
+		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
+			RegWrite_MEM, Rd_MEM, imm_MEM})
 	);
 
 
@@ -151,14 +159,16 @@ module cpu(clk, rst_n, pc, hlt);
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PipelineReg plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
-		.signals_in({alu_out_MEM, pc_next_MEM, mem_out_MEM, DataSrc_MEM, RegWrite_MEM, Rd_MEM}),
-		.signals_out({alu_out_WB, pc_next_WB, mem_out_WB, DataSrc_WB, RegWrite_WB, Rd_WB})
+		.signals_in({alu_out_MEM, pcs_MEM, mem_out_MEM, DataSrc_MEM,
+			RegWrite_MEM, Rd_MEM, imm_MEM}),
+		.signals_out({alu_out_WB, pcs_WB, mem_out_WB, DataSrc_WB, RegWrite_WB,
+			Rd_WB, imm_WB})
 	);
 
 ///////////////////////////////////////WB///////////////////////////////////////
 
-	writeback WB(.alu_out(alu_out_WB), .mem_out(mem_out), .imm(imm),
-		.pc_next(pc_next_WB), .DataSrc(DataSrc_WB), .WriteData(WriteData));
+	writeback WB(.alu_out(alu_out_WB), .mem_out(mem_out_WB), .imm(imm_WB),
+		.pcs(pcs_WB), .DataSrc(DataSrc_WB), .WriteData(WriteData));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

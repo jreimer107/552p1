@@ -17,11 +17,11 @@
 * @output BranchSrc determines whether the next instruction address is taken
 *	from pc_out, RegData2, or the supplied immediate.
 */
-module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, ImmSize,
-	BranchSrc, DataSrc, hlt);
+module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
+	Branch, ImmSize, DataSrc, hlt);
   input [3:0] op;
-  output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, hlt;
-  output [1:0] ImmSize, DataSrc, BranchSrc;
+  output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc, Branch, hlt;
+  output [1:0] ImmSize, DataSrc;
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     HLT;
@@ -117,17 +117,11 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, ImmSize,
 	LLB ? 2'b10 :
 	LHB	? 2'b11 : 2'bxx;
 
-  //BRANCHSRC//
-  //If B, immediate used.
-  //If BR, slot 2 data used.
-  //If PCS, pc + 2 used.
-  //If HLT, pc used.
-  //0 for use pc_inc
-  //1 for use immediate
-  //2 for use RegData2.
-  assign BranchSrc = B ? 2'b01 :
-  					 BR ? 2'b1x :
-					  	  2'b00;
+  //BRANCHSRC and BRANCH//
+  //BranchSrc is 0 when branching to immediate, 1 when to register.
+  //Branch is 1 when a branch instr is currently in the decode phase, else 0.
+  assign BranchSrc = BR;
+  assign Branch = B || BR;
 
   //DATASRC//
   //00 if data from MEMORY

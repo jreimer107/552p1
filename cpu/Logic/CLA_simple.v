@@ -1,3 +1,34 @@
+/* CLA_16bit
+* The second-level hierarchical CLA structure. Has 4 4bit adders and one CLA
+* logic block to compute carries for the 4bit level and overall generates and
+* propagates at the 16bit level. Also contains the reduction unit necessary for
+* the RED instruction. Non PADDSB or RED outputs are saturated.
+* @input A and B are the word (16 bit) addends.
+* @output S is the sum calculated by adding A, B, and sub.
+*/
+module CLA_16bit(A, B, S);
+	input [15:0] A, B;
+  	output [15:0] S;
+
+  	wire signed [15:0] S_raw, S_sat;
+  	wire c1, c2, c3;
+  	wire [3:0] g, p;
+  	wire G, P;
+
+  	CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(sub), .S(S_raw[3:0]), .G(g[0]),
+		.P(p[0]));
+  	CLA_4bit adder1(.A(A[7:4]), .B(B[7:4]), .c0(c1), .S(S_raw[7:4]), .G(g[1]),
+		.P(p[1]));
+  	CLA_4bit adder2(.A(A[11:8]), .B(B[11:8]), .c0(c2), .S(S_raw[11:8]),
+		.G(g[2]), .P(p[2]));
+  	CLA_4bit adder3(.A(A[15:12]), .B(B[15:12]), .c0(c3), .S(S_raw[15:12]),
+		.G(g[3]), .P(p[3]));
+
+	//16bit logic block
+  	CLA_block logic(.g_in(g), .p_in(p), .c0(sub),
+    	.G_out(G), .P_out(P), .c1(c1), .c2(c2), .c3(c3));
+endmodule
+
 /* CLA_4bit
 * First_level hierarchical CLA structure. Has 4 1bit adders and one CLA logic
 * block to compute carries for the 1bit level and generate and propagate signals
@@ -6,21 +37,17 @@
 * @input c0 is the carry in value given by the 16bit level logic block.
 * @input sat is 1 when a PADDSB instruction has been issued. Causes S to
 *   saturate to 1111 or 0111, and turns off outputs P and G.
-* @input red is 1 when a RED instruction has been issued. Stops carry
-*   propagation by turning off output P.
 * @output S is the sum calculated by adding A, B, and c0.
 * @output G determines whether A and B will generate a carry regardless of c0.
 * @output p determines if B and A will propagate a carry if c0 is 1.
 */
-module CLA_4bit(A, B, c0, S, G, P, sat, red);
+module CLA_4bit(A, B, c0, S, G, P);
 	input [3:0] A, B;
-  	input c0;       //Delivered to block 0 and to logic to compute other carries.
-  	input sat, red;
+  	input c0;      //Delivered to block 0 and to logic to compute other carries.
   	output [3:0] S;
   	output G, P;
 
   	wire [3:0] g, p, S_raw;
-  	wire G_raw, P_raw;
   	wire c1, c2, c3; //Carries to be delivered to blocks 1, 2, and 3 from logic.
   	wire pos_ovfl, neg_ovfl;
 
@@ -31,20 +58,7 @@ module CLA_4bit(A, B, c0, S, G, P, sat, red);
 
   	//CLA logic
   	CLA_block logic(.g_in(g), .p_in(p), .c0(c0),
-    	.G_out(G_raw), .P_out(P_raw), .c1(c1), .c2(c2), .c3(c3));
-
-	//Saturation for PADDSB
-  	assign pos_ovfl = (S_raw[3] & ~A[3] & ~B[3]);
-  	assign neg_ovfl = (~S_raw[3] & A[3] & B[3]);
-
-  	assign S = ~sat ? S_raw :
-  			 	pos_ovfl ? 4'b0111 :
-			 	neg_ovfl ? 4'b1000 :
-				S_raw;
-
-  	assign P = (sat | red) ? 1'b0 : P_raw;
-  	assign G = sat ? 1'b0 : G_raw;
-
+    	.G_out(G), .P_out(P), .c1(c1), .c2(c2), .c3(c3));
 endmodule
 
 /* CLA_1bit
