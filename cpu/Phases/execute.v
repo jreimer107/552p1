@@ -12,23 +12,19 @@
 * 	values in the flag register.
 */
 module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out,
-		ForwardA, ForwardB, alu_out_MEM, imm_out, WriteData, NVZ);
+		ForwardA, ForwardB, alu_out_MEM, imm_out, alu_imm, WriteData, NVZ);
 	input clk, rst;
 	input [15:0] instr, imm, RegData1, RegData2;
 	input ALUSrc;
 	//Forwarding inputs
 	input [1:0] ForwardA, ForwardB;
-	input [15:0] alu_out_MEM, imm_out, WriteData;
+	input [15:0] alu_out_MEM, imm_out, alu_imm, WriteData;
 
 	output [15:0] alu_out;
 	output [2:0] NVZ;
 
 	wire [15:0] alu_in, alu_imm, ALUA, ALUB;
 	wire alu_ovfl;
-
-	wire LB;
-	assign LB = op[3] & ~op[2] & op[1];
-	assign alu_imm = LB ? imm_out : alu_out_MEM;
 
 	assign alu_in = ALUSrc ? imm : RegData2;
 
