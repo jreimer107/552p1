@@ -18,8 +18,8 @@ module cpu(clk, rst_n, pc, hlt);
 
 	// control signals
 	wire RegSrc, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
-		Branch, BranchSrc, hlt_ID;
-	wire [1:0] ImmSize, DataSrc_ID;
+		Branch, BranchSrc, hlt_ID, ImmSize;
+	wire [1:0] DataSrc_ID;
 
     ///////////////// EX SIGNALS////////////////////////////////////
 	wire cond_true;

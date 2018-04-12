@@ -20,8 +20,8 @@
 module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	Branch, ImmSize, DataSrc, hlt);
   input [3:0] op;
-  output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc, Branch, hlt;
-  output [1:0] ImmSize, DataSrc;
+  output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc, Branch, hlt, ImmSize;
+  output [1:0] DataSrc;
 
   wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     HLT;
@@ -108,14 +108,9 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
   assign RegWrite = (!op[3] || LW || LHB || LLB || PCS);
 
   //IMMSIZE//
-  //immediate of size 4 for shift and LW/SW, SE to 16 (00)
-  //size 9 for B, SE to 16 (01)
-  //size 8 for LLB, arrange to be lower byte. (10)
-  //size 8 for LHB, arrange to be higher byte (11)
-  assign ImmSize = (shift || LW || SW) ? 2'b00 :
-    B ? 2'b01 :
-	LLB ? 2'b10 :
-	LHB	? 2'b11 : 2'bxx;
+  //immediate of size 4 for shift and LW/SW, SE to 16 (0)
+  //size 9 elsewise (1)
+  assign ImmSize = (shift || LW || SW) ? 1'b0 : 1'b1
 
   //BRANCHSRC and BRANCH//
   //BranchSrc is 0 when branching to immediate, 1 when to register.

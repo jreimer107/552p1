@@ -56,5 +56,5 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 	/*if (Rd_MEM = Rd_Ex)
 		ForwardImm = 1
 	*/
-	assign ImmHazard = (exmemWR == memwbWR);
+	assign ForwardImm = (exmemWR == memwbWR);
 endmodule

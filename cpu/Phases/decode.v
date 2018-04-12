@@ -3,7 +3,7 @@ module decode(clk, rst, instr, pc, DstReg, ImmSize, RegSrc, RegWrite, BranchSrc,
 	input clk, rst;
 	input [3:0] DstReg;
 	input [15:0] instr, pc, WriteData;
-	input [1:0] ImmSize;
+	input ImmSize;
 	input RegSrc, RegWrite, BranchSrc;
 	output [15:0] imm, RegData1, RegData2, pc_branch;
 
@@ -19,10 +19,8 @@ module decode(clk, rst, instr, pc, DstReg, ImmSize, RegSrc, RegWrite, BranchSrc,
 	* 10 for LLB, arrange to be lower byte
 	* 11 for LHB, arrange to be higher byte.
 	*/
-	assign imm = (ImmSize == 2'b00) ? {{12{instr[3]}}, instr[3:0]} :
-				 (ImmSize == 2'b01) ? {{7{instr[8]}}, instr[8:0]} :
-				 (ImmSize == 2'b10) ? {RegData2[15:8], instr[7:0]} :
-				  /*2'b11*/			  {instr[7:0], RegData2[7:0]};
+	assign imm = ~ImmSize ? {{12{instr[3]}}, instr[3:0]} :
+				 			{{7{instr[8]}}, instr[8:0]};
 
 	//Decides between branch targets for B vs BR instrs
 	assign pc_branch = BranchSrc ? RegData1 : branch_imm;
