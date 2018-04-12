@@ -14,7 +14,6 @@ module cpu(clk, rst_n, pc, hlt);
     ///////////////////////// ID SIGNALS/////////////////////////////
 	wire [15:0] instr_ID, pc_branch, pcs_ID;
 	wire [15:0] RegData1_ID, RegData2_ID, imm_ID;
-	wire bubble;
 
 	// control signals
 	wire RegSrc_ID, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
@@ -97,7 +96,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
-		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
+		.branch(cond_true & Branch), .stop(hlt | insert_bubble), .instr(instr_IF),
 		.pcs(pcs_IF));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
