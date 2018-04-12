@@ -107,7 +107,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
-			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX, instr_EX[0]}),
+			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX, instr_EX[12]}),
 		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
 			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM, LdByte})
 	);

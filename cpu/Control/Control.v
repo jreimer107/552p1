@@ -110,7 +110,7 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
   //IMMSIZE//
   //immediate of size 4 for shift and LW/SW, SE to 16 (0)
   //size 9 elsewise (1)
-  assign ImmSize = (shift || LW || SW) ? 1'b0 : 1'b1
+  assign ImmSize = (shift || LW || SW) ? 1'b0 : 1'b1;
 
   //BRANCHSRC and BRANCH//
   //BranchSrc is 0 when branching to immediate, 1 when to register.

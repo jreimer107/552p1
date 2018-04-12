@@ -19,7 +19,7 @@ module memory(clk, rst, alu_out, RegData2, MemOp, MemWrite, mem_out,
 	*/
 	//LdByte is 0 for high byte, 1 for low
 	assign imm_out = ForwardImm ?
-		(LdByte ? {imm_WB[15:8], imm_MEM[7:0]} : {imm_MEM[15:8], imm_WB[7:0]}) : 
-		(LdByte ? {RegData2_MEM[15:8], imm_MEM[7:0]} : {imm_MEM[15:8], RegData2_MEM[7:0]});
+		(LdByte ? {imm_WB[15:8], imm_MEM[7:0]} : {imm_MEM[7:0], imm_WB[7:0]}) : 
+		(LdByte ? {RegData2[15:8], imm_MEM[7:0]} : {imm_MEM[7:0], RegData2[7:0]});
 
 endmodule
