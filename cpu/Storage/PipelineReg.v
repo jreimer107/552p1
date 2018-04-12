@@ -40,7 +40,7 @@ module PLR_IFID(clk, rst, enable, signals_in, signals_out);
 	dff ff31(signals_out[31], signals_in[31], enable, clk, rst);
 endmodule
 
-module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
+module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
 
 	input clk;
 	input rst;
@@ -121,9 +121,10 @@ module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 	dff ff70(signals_out[70], signals_in[70], enable, clk, rst);
 	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
 	dff ff72(signals_out[72], signals_in[72], enable, clk, rst);
+	dff ff73(signals_out[73], signals_in[73], enable, clk, rst);
 endmodule
 
-module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
+module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 
 	input clk;
 	input rst;
