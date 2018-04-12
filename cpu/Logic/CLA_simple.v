@@ -10,18 +10,17 @@ module CLA_16bit(A, B, S);
 	input [15:0] A, B;
   	output [15:0] S;
 
-  	wire signed [15:0] S_raw, S_sat;
   	wire c1, c2, c3;
   	wire [3:0] g, p;
   	wire G, P;
 
-  	CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(sub), .S(S_raw[3:0]), .G(g[0]),
+  	CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(sub), .S(S[3:0]), .G(g[0]),
 		.P(p[0]));
-  	CLA_4bit adder1(.A(A[7:4]), .B(B[7:4]), .c0(c1), .S(S_raw[7:4]), .G(g[1]),
+  	CLA_4bit adder1(.A(A[7:4]), .B(B[7:4]), .c0(c1), .S(S[7:4]), .G(g[1]),
 		.P(p[1]));
-  	CLA_4bit adder2(.A(A[11:8]), .B(B[11:8]), .c0(c2), .S(S_raw[11:8]),
+  	CLA_4bit adder2(.A(A[11:8]), .B(B[11:8]), .c0(c2), .S(S[11:8]),
 		.G(g[2]), .P(p[2]));
-  	CLA_4bit adder3(.A(A[15:12]), .B(B[15:12]), .c0(c3), .S(S_raw[15:12]),
+  	CLA_4bit adder3(.A(A[15:12]), .B(B[15:12]), .c0(c3), .S(S[15:12]),
 		.G(g[3]), .P(p[3]));
 
 	//16bit logic block
