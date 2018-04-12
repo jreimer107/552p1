@@ -86,7 +86,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({instr_ID, pcs_ID, DataSrc_ID, RegWrite_ID, RegData1_ID,
-			RegData2_ID, ALUSrc_ID, imm_ID, MemOp_ID, MemWrite_ID, hlt_ID),
+			RegData2_ID, ALUSrc_ID, imm_ID, MemOp_ID, MemWrite_ID, hlt_ID}),
 		.signals_out({instr_EX, pcs_EX, DataSrc_EX, RegWrite_EX, RegData1_EX,
 			RegData2_EX, ALUSrc_EX, imm_EX, MemOp_EX, MemWrite_EX, hlt_EX})
 	);
