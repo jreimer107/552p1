@@ -45,8 +45,8 @@ module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
 	input clk;
 	input rst;
 	input enable;
-	input [73:0] signals_in;
-	output [73:0] signals_out;
+	input [74:0] signals_in;
+	output [74:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
@@ -122,6 +122,8 @@ module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
 	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
 	dff ff72(signals_out[72], signals_in[72], enable, clk, rst);
 	dff ff73(signals_out[73], signals_in[73], enable, clk, rst);
+	dff ff74(signals_out[74], signals_in[74], enable, clk, rst);
+
 endmodule
 
 module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
@@ -129,8 +131,8 @@ module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 	input clk;
 	input rst;
 	input enable;
-	input [85:0] signals_in;
-	output [85:0] signals_out;
+	input [86:0] signals_in;
+	output [86:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
@@ -218,6 +220,7 @@ module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 	dff ff83(signals_out[83], signals_in[83], enable, clk, rst);
 	dff ff84(signals_out[84], signals_in[84], enable, clk, rst);
 	dff ff85(signals_out[85], signals_in[85], enable, clk, rst);
+	dff ff86(signals_out[86], signals_in[86], enable, clk, rst);
 	// coulda did this way more easily and with fewer errors with a generate statement
 endmodule
 
@@ -226,8 +229,8 @@ module PLR_MEMWB(clk, rst, enable, signals_in, signals_out);
 	input clk;
 	input rst;
 	input enable;
-	input [70:0] signals_in;
-	output [70:0] signals_out;
+	input [71:0] signals_in;
+	output [71:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
@@ -300,4 +303,6 @@ module PLR_MEMWB(clk, rst, enable, signals_in, signals_out);
 	dff ff68(signals_out[68], signals_in[68], enable, clk, rst);
 	dff ff69(signals_out[69], signals_in[69], enable, clk, rst);
 	dff ff70(signals_out[70], signals_in[70], enable, clk, rst);
+	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
+	
 endmodule
