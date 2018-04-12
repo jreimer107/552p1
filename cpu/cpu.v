@@ -96,7 +96,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .ALUSrc(ALUSrc_EX), .imm(imm_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
-		.ForwardA(ForwardA), .ForwardB(ForwardB),
+		.ForwardA(ForwardA), .ForwardB(ForwardB), .imm_out(imm_out),
 		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
 	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
