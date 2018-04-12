@@ -28,17 +28,18 @@ module cpu(clk, rst_n, pc, hlt);
 
 	//Forwarding Signals
 	wire [1:0] ForwardA, ForwardB;
+	wire ForwardImm;
 
 	// control signals
 	wire ALUSrc_EX, MemOp_EX, MemWrite_EX, RegWrite_EX, hlt_EX;
 	wire[1:0] DataSrc_EX;
 
     ///////////////// MEM SIGNALS//////////////////////////////////////
-	wire [15:0] pcs_MEM, alu_out_MEM, RegData2_MEM, mem_out_MEM, imm_MEM;
+	wire [15:0] pcs_MEM, alu_out_MEM, RegData2_MEM, mem_out_MEM, imm_MEM, imm_out;
 	wire [3:0] Rd_MEM; //Forwarding
 
 	// control signals
-	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM, hlt_MEM;
+	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM, hlt_MEM, LdByte;
 	wire[1:0] DataSrc_MEM;
 
     //////////////////////////// WB SIGNALS///////////////////////////
@@ -100,28 +101,30 @@ module cpu(clk, rst_n, pc, hlt);
 
 	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
 		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
-		.ForwardA(ForwardA), .ForwardB(ForwardB));
+		.ForwardA(ForwardA), .ForwardB(ForwardB) .ForwardImm(ForwardImm));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
-			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX}),
+			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX, instr_EX[0]}),
 		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
-			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM})
+			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM, LdByte})
 	);
 
 
 ///////////////////////////////////////MEM//////////////////////////////////////
 
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
-	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM));
+	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM),
+	 .ForwardImm(ForwardImm), .LdByte(LdByte), .imm_MEM(imm_MEM), .imm_WB(imm_WB), 
+	 .imm_out(imm_out));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({alu_out_MEM, pcs_MEM, mem_out_MEM, DataSrc_MEM,
-			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM}),
+			RegWrite_MEM, Rd_MEM, imm_out, hlt_MEM}),
 		.signals_out({alu_out_WB, pcs_WB, mem_out_WB, DataSrc_WB, RegWrite_WB,
 			Rd_WB, imm_WB, hlt_WB})
 	);

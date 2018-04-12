@@ -45,8 +45,8 @@ module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
 	input clk;
 	input rst;
 	input enable;
-	input [74:0] signals_in;
-	output [74:0] signals_out;
+	input [75:0] signals_in;
+	output [75:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
@@ -123,6 +123,7 @@ module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
 	dff ff72(signals_out[72], signals_in[72], enable, clk, rst);
 	dff ff73(signals_out[73], signals_in[73], enable, clk, rst);
 	dff ff74(signals_out[74], signals_in[74], enable, clk, rst);
+	dff ff75(signals_out[75], signals_in[75], enable, clk, rst);
 
 endmodule
 

@@ -10,10 +10,11 @@
 */
 //TODO: needs testing.
 module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
-	RegWrite_WB, ForwardA, ForwardB);
+	RegWrite_WB, ForwardA, ForwardB, ForwardImm);
 	input [3:0] exmemWR, memwbWR, idexRs, idexRt;
 	input RegWrite_MEM, RegWrite_WB;
 	output [1:0] ForwardA, ForwardB;
+	output ForwardImm;
 
 	/* Types of forwarding this needs to accomplish
 	* 1. EX/MEM.WriteReg = ID/EX.ReadReg1
@@ -51,4 +52,9 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 	assign ForwardB = ExHazard2  ? 2'b1x :
 					  MemHazard2 ? 2'b01 :
 					  			   2'b00;
+
+	/*if (Rd_MEM = Rd_Ex)
+		ForwardImm = 1
+	*/
+	assign ImmHazard = (exmemWR == memwbWR);
 endmodule

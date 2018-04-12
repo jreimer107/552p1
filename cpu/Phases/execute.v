@@ -36,7 +36,6 @@ module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out,
 				  (ForwardB == 2'b01) ? WriteData :
 				  						alu_out_MEM;
 
-
 	ALU alu(.A(ALUA), .B(ALUB), .op(instr[15:12]), .out(alu_out),
 		.ovfl(alu_ovfl));
 
