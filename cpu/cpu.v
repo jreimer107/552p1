@@ -18,7 +18,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	// control signals
 	wire RegSrc, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
-		Branch, BranchSrc;
+		Branch, BranchSrc, hlt_ID;
 	wire [1:0] ImmSize, DataSrc_ID;
 
     ///////////////// EX SIGNALS////////////////////////////////////
@@ -30,7 +30,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire [1:0] ForwardA, ForwardB;
 
 	// control signals
-	wire ALUSrc_EX, MemOp_EX, MemWrite_EX, RegWrite_EX;
+	wire ALUSrc_EX, MemOp_EX, MemWrite_EX, RegWrite_EX, hlt_EX;
 	wire[1:0] DataSrc_EX;
 
     ///////////////// MEM SIGNALS//////////////////////////////////////
@@ -38,7 +38,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire [3:0] Rd_MEM; //Forwarding
 
 	// control signals
-	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM;
+	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM, hlt_MEM;
 	wire[1:0] DataSrc_MEM;
 
     //////////////////////////// WB SIGNALS///////////////////////////
@@ -47,12 +47,13 @@ module cpu(clk, rst_n, pc, hlt);
 
 	// control signals
 	wire[1:0] DataSrc_WB;
-	wire RegWrite_WB;
+	wire RegWrite_WB, hlt_WB;
+	assign hlt = hlt_WB;
 
 
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
-		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
+		.branch(cond_true & Branch), .stop(hlt_WB | bubble), .instr(instr_IF),
 		.pc(pc), .pcs(pcs_IF));
 
 	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID), 
@@ -85,9 +86,9 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({instr_ID, pcs_ID, DataSrc_ID, RegWrite_ID, RegData1_ID,
-			RegData2_ID, ALUSrc_ID, imm_ID, MemOp_ID, MemWrite_ID}),
+			RegData2_ID, ALUSrc_ID, imm_ID, MemOp_ID, MemWrite_ID, hlt_ID),
 		.signals_out({instr_EX, pcs_EX, DataSrc_EX, RegWrite_EX, RegData1_EX,
-			RegData2_EX, ALUSrc_EX, imm_EX, MemOp_EX, MemWrite_EX})
+			RegData2_EX, ALUSrc_EX, imm_EX, MemOp_EX, MemWrite_EX, hlt_EX})
 	);
 
 ///////////////////////////////////////EX///////////////////////////////////////
@@ -105,9 +106,9 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
-			RegWrite_EX, instr_EX[11:8], imm_EX}),
+			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX}),
 		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
-			RegWrite_MEM, Rd_MEM, imm_MEM})
+			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM})
 	);
 
 
@@ -120,9 +121,9 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({alu_out_MEM, pcs_MEM, mem_out_MEM, DataSrc_MEM,
-			RegWrite_MEM, Rd_MEM, imm_MEM}),
+			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM}),
 		.signals_out({alu_out_WB, pcs_WB, mem_out_WB, DataSrc_WB, RegWrite_WB,
-			Rd_WB, imm_WB})
+			Rd_WB, imm_WB, hlt_WB})
 	);
 
 ///////////////////////////////////////WB///////////////////////////////////////
