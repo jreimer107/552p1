@@ -59,10 +59,12 @@ module cpu_ptb();
       rst_n = 0; /* Intial reset state */
       clk = 1;
       #201 rst_n = 1; // delay until slightly after two clock periods
+      
     end
 
-    always #50 begin   // delay 1/2 clock period each time thru loop
+    always #100 begin   // delay 1/2 clock period each time thru loop
       clk = ~clk;
+      //$stop();
     end
 
     always @(posedge clk) begin
