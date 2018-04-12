@@ -10,6 +10,7 @@ module cpu(clk, rst_n, pc, hlt);
 
     /////////////////////////// IF SIGNALS/////////////////////////////
 	wire [15:0] instr_IF, pcs_IF;
+	wire NOP_or_instr_IF;
 
     ///////////////////////// ID SIGNALS/////////////////////////////
 	wire [15:0] instr_ID, pc_branch, pcs_ID;
@@ -49,39 +50,14 @@ module cpu(clk, rst_n, pc, hlt);
 	wire RegWrite_WB;
 
 
-
-	// feels bad, basically duplicated half the ID phase here  
-   	wire op, op7to0, op7to4, op11to4, op11to8;
-   	
-   	assign op = instr_IF[15:12];
-
-	//Karnaugh Maps! <3
-	wire A, B, C, D;
-	assign {A,B,C,D} = op;
-	assign op7to0 = (~A & ~B) | (~A & C & D);
-	assign op7to4 = (~A & B & ~D) | (B & ~C & D);
-	assign op11to4 = A & ~B & C;
-	assign op11to8 = A & B & ~C;
-	
-	wire bubble;
-	
-	assign bubble = MemOp_ID && ~MemWrite_ID && 
-		op7to0 ? (instr_ID[11:8] == instr_IF[7:4] || instr_ID[11:8] == instr_IF[3:0]) :
-		op7to4 ? (instr_ID[11:8] == instr_IF[7:4]) : 
-		op11to4 ? (instr_ID[11:8] == instr_IF[11:8] || instr_ID[11:8] == instr_IF[7:4]) : 
-		op11to8 ? (instr_ID[11:8] == instr_IF[11:8]) : 
-		1'b0;
-	
-		
-	wire NOP_or_instr_IF;
-	assign NOP_or_instr_IF = bubble ? 16'h0000 : instr_IF;
-
-
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
 		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
 		.pcs(pcs_IF));
 
+	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID), .bubble(bubble),
+		.NOP_or_instr_IF(NOP_or_instr_IF));
+		
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
