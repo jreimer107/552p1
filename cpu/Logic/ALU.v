@@ -29,7 +29,9 @@ module ALU(A, B, op, ovfl, out);
   //Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
   wire [15:0] B_cla;
   wire sub, sat, red;
-  assign B_cla = (op == SUB) ? ~B : B;
+  assign B_cla = (op == SUB) ? ~B : 
+  				 (op == MEM) ? (B << 1) : 
+				   				B;
   assign sub = (op == SUB);
   assign sat = (op == PADDSB);
   assign red = (op == RED);
@@ -45,7 +47,7 @@ module ALU(A, B, op, ovfl, out);
 
   //output mux
   assign out = (op == XOR) ? out_xor :
-               (op == PADDSB) ? out_cla :    //THIS FUCKER IS IN THE WRONG PLACE
+               (op == PADDSB) ? out_cla :
                (~op[3] & op[2]) ? out_shift :
                   out_cla;
 
