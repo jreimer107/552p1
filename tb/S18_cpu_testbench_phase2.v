@@ -64,7 +64,7 @@ module cpu_ptb();
 
     always #100 begin   // delay 1/2 clock period each time thru loop
       clk = ~clk;
-      if (~clk) $stop();
+      //if (~clk) $stop();
     end
 
     always @(posedge clk) begin
