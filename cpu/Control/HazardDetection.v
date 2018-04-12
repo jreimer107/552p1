@@ -1,4 +1,4 @@
-module HazardDetection(intr_IF, instr_ID, MemOp_ID, MemWrite_ID, 
+module HazardDetection(instr_IF, instr_ID, MemOp_ID, MemWrite_ID, 
 	bubble, NOP_or_instr_IF);
 	input [15:0] instr_IF, instr_ID;
 	input MemOp_ID, MemWrite_ID;
