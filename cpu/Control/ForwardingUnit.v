@@ -30,7 +30,7 @@ module ForwardingUnit(exmemWR, memwbWR, idexRs, idexRt, RegWrite_MEM,
 	//MEM HAZARD
 	wire MemHazard1, MemHazard2;
 	assign MemHazard1 = (RegWrite_WB && memwbWR && !ExHazard1 && (memwbWR == idexRs));
-	assign MemHazard1 = (RegWrite_WB && memwbWR && !ExHazard2 && (memwbWR == idexRt));
+	assign MemHazard2 = (RegWrite_WB && memwbWR && !ExHazard2 && (memwbWR == idexRt));
 
 
 	/* Forward A: whether ALUin1 needs to be forwarded

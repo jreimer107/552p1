@@ -30,7 +30,7 @@ module ALU(A, B, op, ovfl, out);
   wire [15:0] B_cla;
   wire sub, sat, red;
   assign B_cla = (op == SUB) ? ~B : 
-  				 (op == MEM) ? (B << 1) : 
+  				 (op == op[3] & ~op[2]) ? (B << 1) : 
 				   				B;
   assign sub = (op == SUB);
   assign sat = (op == PADDSB);
