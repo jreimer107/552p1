@@ -40,100 +40,13 @@ module PLR_IFID(clk, rst, enable, signals_in, signals_out);
 	dff ff31(signals_out[31], signals_in[31], enable, clk, rst);
 endmodule
 
-module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
-
-	input clk;
-	input rst;
-	input enable;
-	input [75:0] signals_in;
-	output [75:0] signals_out;
-
-	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
-	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
-	dff ff02(signals_out[02], signals_in[02], enable, clk, rst);
-	dff ff03(signals_out[03], signals_in[03], enable, clk, rst);
-	dff ff04(signals_out[04], signals_in[04], enable, clk, rst);
-	dff ff05(signals_out[05], signals_in[05], enable, clk, rst);
-	dff ff06(signals_out[06], signals_in[06], enable, clk, rst);
-	dff ff07(signals_out[07], signals_in[07], enable, clk, rst);
-	dff ff08(signals_out[08], signals_in[08], enable, clk, rst);
-	dff ff09(signals_out[09], signals_in[09], enable, clk, rst);
-	dff ff10(signals_out[10], signals_in[10], enable, clk, rst);
-	dff ff11(signals_out[11], signals_in[11], enable, clk, rst);
-	dff ff12(signals_out[12], signals_in[12], enable, clk, rst);
-	dff ff13(signals_out[13], signals_in[13], enable, clk, rst);
-	dff ff14(signals_out[14], signals_in[14], enable, clk, rst);
-	dff ff15(signals_out[15], signals_in[15], enable, clk, rst);
-	dff ff16(signals_out[16], signals_in[16], enable, clk, rst);
-	dff ff17(signals_out[17], signals_in[17], enable, clk, rst);
-	dff ff18(signals_out[18], signals_in[18], enable, clk, rst);
-	dff ff19(signals_out[19], signals_in[19], enable, clk, rst);
-	dff ff20(signals_out[20], signals_in[20], enable, clk, rst);
-	dff ff21(signals_out[21], signals_in[21], enable, clk, rst);
-	dff ff22(signals_out[22], signals_in[22], enable, clk, rst);
-	dff ff23(signals_out[23], signals_in[23], enable, clk, rst);
-	dff ff24(signals_out[24], signals_in[24], enable, clk, rst);
-	dff ff25(signals_out[25], signals_in[25], enable, clk, rst);
-	dff ff26(signals_out[26], signals_in[26], enable, clk, rst);
-	dff ff27(signals_out[27], signals_in[27], enable, clk, rst);
-	dff ff28(signals_out[28], signals_in[28], enable, clk, rst);
-	dff ff29(signals_out[29], signals_in[29], enable, clk, rst);
-	dff ff30(signals_out[30], signals_in[30], enable, clk, rst);
-	dff ff31(signals_out[31], signals_in[31], enable, clk, rst);
-	dff ff32(signals_out[32], signals_in[32], enable, clk, rst);
-	dff ff33(signals_out[33], signals_in[33], enable, clk, rst);
-	dff ff34(signals_out[34], signals_in[34], enable, clk, rst);
-	dff ff35(signals_out[35], signals_in[35], enable, clk, rst);
-	dff ff36(signals_out[36], signals_in[36], enable, clk, rst);
-	dff ff37(signals_out[37], signals_in[37], enable, clk, rst);
-	dff ff38(signals_out[38], signals_in[38], enable, clk, rst);
-	dff ff39(signals_out[39], signals_in[39], enable, clk, rst);
-	dff ff40(signals_out[40], signals_in[40], enable, clk, rst);
-	dff ff41(signals_out[41], signals_in[41], enable, clk, rst);
-	dff ff42(signals_out[42], signals_in[42], enable, clk, rst);
-	dff ff43(signals_out[43], signals_in[43], enable, clk, rst);
-	dff ff44(signals_out[44], signals_in[44], enable, clk, rst);
-	dff ff45(signals_out[45], signals_in[45], enable, clk, rst);
-	dff ff46(signals_out[46], signals_in[46], enable, clk, rst);
-	dff ff47(signals_out[47], signals_in[47], enable, clk, rst);
-	dff ff48(signals_out[48], signals_in[48], enable, clk, rst);
-	dff ff49(signals_out[49], signals_in[49], enable, clk, rst);
-	dff ff50(signals_out[50], signals_in[50], enable, clk, rst);
-	dff ff51(signals_out[51], signals_in[51], enable, clk, rst);
-	dff ff52(signals_out[52], signals_in[52], enable, clk, rst);
-	dff ff53(signals_out[53], signals_in[53], enable, clk, rst);
-	dff ff54(signals_out[54], signals_in[54], enable, clk, rst);
-	dff ff55(signals_out[55], signals_in[55], enable, clk, rst);
-	dff ff56(signals_out[56], signals_in[56], enable, clk, rst);
-	dff ff57(signals_out[57], signals_in[57], enable, clk, rst);
-	dff ff58(signals_out[58], signals_in[58], enable, clk, rst);
-	dff ff59(signals_out[59], signals_in[59], enable, clk, rst);
-	dff ff60(signals_out[60], signals_in[60], enable, clk, rst);
-	dff ff61(signals_out[61], signals_in[61], enable, clk, rst);
-	dff ff62(signals_out[62], signals_in[62], enable, clk, rst);
-	dff ff63(signals_out[63], signals_in[63], enable, clk, rst);
-	dff ff64(signals_out[64], signals_in[64], enable, clk, rst);
-	dff ff65(signals_out[65], signals_in[65], enable, clk, rst);
-	dff ff66(signals_out[66], signals_in[66], enable, clk, rst);
-	dff ff67(signals_out[67], signals_in[67], enable, clk, rst);
-	dff ff68(signals_out[68], signals_in[68], enable, clk, rst);
-	dff ff69(signals_out[69], signals_in[69], enable, clk, rst);
-	dff ff70(signals_out[70], signals_in[70], enable, clk, rst);
-	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
-	dff ff72(signals_out[72], signals_in[72], enable, clk, rst);
-	dff ff73(signals_out[73], signals_in[73], enable, clk, rst);
-	dff ff74(signals_out[74], signals_in[74], enable, clk, rst);
-	dff ff75(signals_out[75], signals_in[75], enable, clk, rst);
-
-endmodule
-
 module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 
 	input clk;
 	input rst;
 	input enable;
-	input [109:0] signals_in;
-	output [109:0] signals_out;
+	input [86:0] signals_in;
+	output [86:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
@@ -222,37 +135,159 @@ module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 	dff ff84(signals_out[84], signals_in[84], enable, clk, rst);
 	dff ff85(signals_out[85], signals_in[85], enable, clk, rst);
 	dff ff86(signals_out[86], signals_in[86], enable, clk, rst);
-	dff ff87(signals_out[87], signals_in[87], enable, clk, rst);
-	dff ff88(signals_out[88], signals_in[88], enable, clk, rst);
-	dff ff89(signals_out[89], signals_in[89], enable, clk, rst);
-	dff ff90(signals_out[90], signals_in[90], enable, clk, rst);
-	dff ff91(signals_out[91], signals_in[91], enable, clk, rst);
-	dff ff92(signals_out[92], signals_in[92], enable, clk, rst);
-	dff ff93(signals_out[93], signals_in[93], enable, clk, rst);
-	dff ff94(signals_out[94], signals_in[94], enable, clk, rst);
-	dff ff95(signals_out[95], signals_in[95], enable, clk, rst);
-	dff ff96(signals_out[96], signals_in[96], enable, clk, rst);
-	dff ff97(signals_out[97], signals_in[97], enable, clk, rst);
-	dff ff98(signals_out[98], signals_in[98], enable, clk, rst);
-	dff ff99(signals_out[99], signals_in[99], enable, clk, rst);
-	
-	dff ff100(signals_out[100], signals_in[100], enable, clk, rst);
-	dff ff101(signals_out[101], signals_in[101], enable, clk, rst);
-	dff ff102(signals_out[102], signals_in[102], enable, clk, rst);
-	dff ff103(signals_out[103], signals_in[103], enable, clk, rst);
-	dff ff104(signals_out[104], signals_in[104], enable, clk, rst);
-	dff ff105(signals_out[105], signals_in[105], enable, clk, rst);
-	dff ff106(signals_out[106], signals_in[106], enable, clk, rst);
-	dff ff107(signals_out[107], signals_in[107], enable, clk, rst);
-	dff ff108(signals_out[108], signals_in[108], enable, clk, rst);
-	dff ff109(signals_out[109], signals_in[109], enable, clk, rst);
-	
-	
-	
-	
-	
-	
+	// dff ff87(signals_out[87], signals_in[87], enable, clk, rst);
+	// dff ff88(signals_out[88], signals_in[88], enable, clk, rst);
+	// dff ff89(signals_out[89], signals_in[89], enable, clk, rst);
+	// dff ff90(signals_out[90], signals_in[90], enable, clk, rst);
+	// dff ff91(signals_out[91], signals_in[91], enable, clk, rst);
+	// dff ff92(signals_out[92], signals_in[92], enable, clk, rst);
+	// dff ff93(signals_out[93], signals_in[93], enable, clk, rst);
+	// dff ff94(signals_out[94], signals_in[94], enable, clk, rst);
+	// dff ff95(signals_out[95], signals_in[95], enable, clk, rst);
+	// dff ff96(signals_out[96], signals_in[96], enable, clk, rst);
+	// dff ff97(signals_out[97], signals_in[97], enable, clk, rst);
+	// dff ff98(signals_out[98], signals_in[98], enable, clk, rst);
+	// dff ff99(signals_out[99], signals_in[99], enable, clk, rst);
+	//
+	// dff ff100(signals_out[100], signals_in[100], enable, clk, rst);
+	// dff ff101(signals_out[101], signals_in[101], enable, clk, rst);
+	// dff ff102(signals_out[102], signals_in[102], enable, clk, rst);
+	// dff ff103(signals_out[103], signals_in[103], enable, clk, rst);
+	// dff ff104(signals_out[104], signals_in[104], enable, clk, rst);
+	// dff ff105(signals_out[105], signals_in[105], enable, clk, rst);
+	// dff ff106(signals_out[106], signals_in[106], enable, clk, rst);
+	// dff ff107(signals_out[107], signals_in[107], enable, clk, rst);
+	// dff ff108(signals_out[108], signals_in[108], enable, clk, rst);
+	// dff ff109(signals_out[109], signals_in[109], enable, clk, rst);
+
+
+
+
+
+
 		// coulda did this way more easily and with fewer errors with a generate statement
+endmodule
+
+module PLR_EXMEM(clk, rst, enable, signals_in, signals_out);
+
+	input clk;
+	input rst;
+	input enable;
+	input [78:0] signals_in;
+	output [78:0] signals_out;
+
+	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
+	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
+	dff ff02(signals_out[02], signals_in[02], enable, clk, rst);
+	dff ff03(signals_out[03], signals_in[03], enable, clk, rst);
+	dff ff04(signals_out[04], signals_in[04], enable, clk, rst);
+	dff ff05(signals_out[05], signals_in[05], enable, clk, rst);
+	dff ff06(signals_out[06], signals_in[06], enable, clk, rst);
+	dff ff07(signals_out[07], signals_in[07], enable, clk, rst);
+	dff ff08(signals_out[08], signals_in[08], enable, clk, rst);
+	dff ff09(signals_out[09], signals_in[09], enable, clk, rst);
+	dff ff10(signals_out[10], signals_in[10], enable, clk, rst);
+	dff ff11(signals_out[11], signals_in[11], enable, clk, rst);
+	dff ff12(signals_out[12], signals_in[12], enable, clk, rst);
+	dff ff13(signals_out[13], signals_in[13], enable, clk, rst);
+	dff ff14(signals_out[14], signals_in[14], enable, clk, rst);
+	dff ff15(signals_out[15], signals_in[15], enable, clk, rst);
+	dff ff16(signals_out[16], signals_in[16], enable, clk, rst);
+	dff ff17(signals_out[17], signals_in[17], enable, clk, rst);
+	dff ff18(signals_out[18], signals_in[18], enable, clk, rst);
+	dff ff19(signals_out[19], signals_in[19], enable, clk, rst);
+	dff ff20(signals_out[20], signals_in[20], enable, clk, rst);
+	dff ff21(signals_out[21], signals_in[21], enable, clk, rst);
+	dff ff22(signals_out[22], signals_in[22], enable, clk, rst);
+	dff ff23(signals_out[23], signals_in[23], enable, clk, rst);
+	dff ff24(signals_out[24], signals_in[24], enable, clk, rst);
+	dff ff25(signals_out[25], signals_in[25], enable, clk, rst);
+	dff ff26(signals_out[26], signals_in[26], enable, clk, rst);
+	dff ff27(signals_out[27], signals_in[27], enable, clk, rst);
+	dff ff28(signals_out[28], signals_in[28], enable, clk, rst);
+	dff ff29(signals_out[29], signals_in[29], enable, clk, rst);
+	dff ff30(signals_out[30], signals_in[30], enable, clk, rst);
+	dff ff31(signals_out[31], signals_in[31], enable, clk, rst);
+	dff ff32(signals_out[32], signals_in[32], enable, clk, rst);
+	dff ff33(signals_out[33], signals_in[33], enable, clk, rst);
+	dff ff34(signals_out[34], signals_in[34], enable, clk, rst);
+	dff ff35(signals_out[35], signals_in[35], enable, clk, rst);
+	dff ff36(signals_out[36], signals_in[36], enable, clk, rst);
+	dff ff37(signals_out[37], signals_in[37], enable, clk, rst);
+	dff ff38(signals_out[38], signals_in[38], enable, clk, rst);
+	dff ff39(signals_out[39], signals_in[39], enable, clk, rst);
+	dff ff40(signals_out[40], signals_in[40], enable, clk, rst);
+	dff ff41(signals_out[41], signals_in[41], enable, clk, rst);
+	dff ff42(signals_out[42], signals_in[42], enable, clk, rst);
+	dff ff43(signals_out[43], signals_in[43], enable, clk, rst);
+	dff ff44(signals_out[44], signals_in[44], enable, clk, rst);
+	dff ff45(signals_out[45], signals_in[45], enable, clk, rst);
+	dff ff46(signals_out[46], signals_in[46], enable, clk, rst);
+	dff ff47(signals_out[47], signals_in[47], enable, clk, rst);
+	dff ff48(signals_out[48], signals_in[48], enable, clk, rst);
+	dff ff49(signals_out[49], signals_in[49], enable, clk, rst);
+	dff ff50(signals_out[50], signals_in[50], enable, clk, rst);
+	dff ff51(signals_out[51], signals_in[51], enable, clk, rst);
+	dff ff52(signals_out[52], signals_in[52], enable, clk, rst);
+	dff ff53(signals_out[53], signals_in[53], enable, clk, rst);
+	dff ff54(signals_out[54], signals_in[54], enable, clk, rst);
+	dff ff55(signals_out[55], signals_in[55], enable, clk, rst);
+	dff ff56(signals_out[56], signals_in[56], enable, clk, rst);
+	dff ff57(signals_out[57], signals_in[57], enable, clk, rst);
+	dff ff58(signals_out[58], signals_in[58], enable, clk, rst);
+	dff ff59(signals_out[59], signals_in[59], enable, clk, rst);
+	dff ff60(signals_out[60], signals_in[60], enable, clk, rst);
+	dff ff61(signals_out[61], signals_in[61], enable, clk, rst);
+	dff ff62(signals_out[62], signals_in[62], enable, clk, rst);
+	dff ff63(signals_out[63], signals_in[63], enable, clk, rst);
+	dff ff64(signals_out[64], signals_in[64], enable, clk, rst);
+	dff ff65(signals_out[65], signals_in[65], enable, clk, rst);
+	dff ff66(signals_out[66], signals_in[66], enable, clk, rst);
+	dff ff67(signals_out[67], signals_in[67], enable, clk, rst);
+	dff ff68(signals_out[68], signals_in[68], enable, clk, rst);
+	dff ff69(signals_out[69], signals_in[69], enable, clk, rst);
+	dff ff70(signals_out[70], signals_in[70], enable, clk, rst);
+	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
+	dff ff72(signals_out[72], signals_in[72], enable, clk, rst);
+	dff ff73(signals_out[73], signals_in[73], enable, clk, rst);
+	dff ff74(signals_out[74], signals_in[74], enable, clk, rst);
+	dff ff75(signals_out[75], signals_in[75], enable, clk, rst);
+	dff ff76(signals_out[76], signals_in[76], enable, clk, rst);
+	dff ff77(signals_out[77], signals_in[77], enable, clk, rst);
+	dff ff78(signals_out[78], signals_in[78], enable, clk, rst);
+	// dff ff79(signals_out[79], signals_in[79], enable, clk, rst);
+	// dff ff80(signals_out[80], signals_in[80], enable, clk, rst);
+	// dff ff81(signals_out[81], signals_in[81], enable, clk, rst);
+	// dff ff82(signals_out[82], signals_in[82], enable, clk, rst);
+	// dff ff83(signals_out[83], signals_in[83], enable, clk, rst);
+	// dff ff84(signals_out[84], signals_in[84], enable, clk, rst);
+	// dff ff85(signals_out[85], signals_in[85], enable, clk, rst);
+	// dff ff86(signals_out[86], signals_in[86], enable, clk, rst);
+	// dff ff87(signals_out[87], signals_in[87], enable, clk, rst);
+	// dff ff88(signals_out[88], signals_in[88], enable, clk, rst);
+	// dff ff89(signals_out[89], signals_in[89], enable, clk, rst);
+	// dff ff90(signals_out[90], signals_in[90], enable, clk, rst);
+	// dff ff91(signals_out[91], signals_in[91], enable, clk, rst);
+	// dff ff92(signals_out[92], signals_in[92], enable, clk, rst);
+	// dff ff93(signals_out[93], signals_in[93], enable, clk, rst);
+	// dff ff94(signals_out[94], signals_in[94], enable, clk, rst);
+	// dff ff95(signals_out[95], signals_in[95], enable, clk, rst);
+	// dff ff96(signals_out[96], signals_in[96], enable, clk, rst);
+	// dff ff97(signals_out[97], signals_in[97], enable, clk, rst);
+	// dff ff98(signals_out[98], signals_in[98], enable, clk, rst);
+	// dff ff99(signals_out[99], signals_in[99], enable, clk, rst);
+	//
+	// dff ff100(signals_out[100], signals_in[100], enable, clk, rst);
+	// dff ff101(signals_out[101], signals_in[101], enable, clk, rst);
+	// dff ff102(signals_out[102], signals_in[102], enable, clk, rst);
+	// dff ff103(signals_out[103], signals_in[103], enable, clk, rst);
+	// dff ff104(signals_out[104], signals_in[104], enable, clk, rst);
+	// dff ff105(signals_out[105], signals_in[105], enable, clk, rst);
+	// dff ff106(signals_out[106], signals_in[106], enable, clk, rst);
+	// dff ff107(signals_out[107], signals_in[107], enable, clk, rst);
+	// dff ff108(signals_out[108], signals_in[108], enable, clk, rst);
+	// dff ff109(signals_out[109], signals_in[109], enable, clk, rst);
+
 endmodule
 
 module PLR_MEMWB(clk, rst, enable, signals_in, signals_out);
@@ -335,5 +370,5 @@ module PLR_MEMWB(clk, rst, enable, signals_in, signals_out);
 	dff ff69(signals_out[69], signals_in[69], enable, clk, rst);
 	dff ff70(signals_out[70], signals_in[70], enable, clk, rst);
 	dff ff71(signals_out[71], signals_in[71], enable, clk, rst);
-	
+
 endmodule
