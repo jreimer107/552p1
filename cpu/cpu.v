@@ -17,7 +17,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire [15:0] RegData1_ID, RegData2_ID, imm_ID;
 
 	// control signals
-	wire RegSrc_ID, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
+	wire RegSrc, RegWrite_ID, MemOp_ID, MemWrite_ID, ALUSrc_ID,
 		Branch, BranchSrc;
 	wire [1:0] ImmSize, DataSrc_ID;
 
@@ -30,7 +30,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire [1:0] ForwardA, ForwardB;
 
 	// control signals
-	wire MemOp_EX, MemWrite_EX, RegWrite_EX;
+	wire ALUSrc_EX, MemOp_EX, MemWrite_EX, RegWrite_EX;
 	wire[1:0] DataSrc_EX;
 
     ///////////////// MEM SIGNALS//////////////////////////////////////
@@ -69,7 +69,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 
 ///////////////////////////////////////ID///////////////////////////////////////
-	Control ctrl(.op(instr_ID[15:12]), .RegSrc(RegSrc_ID), .MemOp(MemOp_ID),
+	Control ctrl(.op(instr_ID[15:12]), .RegSrc(RegSrc), .MemOp(MemOp_ID),
 		.MemWrite(MemWrite_ID), .ALUSrc(ALUSrc_ID), .RegWrite(RegWrite_ID),
 		.hlt(hlt_ID), .ImmSize(ImmSize), .BranchSrc(BranchSrc),
 		.Branch(Branch), .DataSrc(DataSrc_ID));
@@ -77,7 +77,7 @@ module cpu(clk, rst_n, pc, hlt);
 	CCodeEval ccc(.C(instr_ID[11:9]), .NVZ(NVZ), .cond_true(cond_true));
 
 	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .pc(pcs_ID),
-		.ImmSize(ImmSize), .RegSrc(RegSrc_ID), .RegWrite(RegWrite_WB),
+		.ImmSize(ImmSize), .RegSrc(RegSrc), .RegWrite(RegWrite_WB),
 		.DstReg(Rd_WB), .WriteData(WriteData), .imm(imm_ID),
 		.BranchSrc(BranchSrc), .RegData1(RegData1_ID), .RegData2(RegData2_ID),
 		.pc_branch(pc_branch));
@@ -103,7 +103,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
 			RegWrite_EX, instr_EX[11:8], imm_EX}),
 		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
@@ -118,7 +118,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PipelineReg plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({alu_out_MEM, pcs_MEM, mem_out_MEM, DataSrc_MEM,
 			RegWrite_MEM, Rd_MEM, imm_MEM}),
 		.signals_out({alu_out_WB, pcs_WB, mem_out_WB, DataSrc_WB, RegWrite_WB,
