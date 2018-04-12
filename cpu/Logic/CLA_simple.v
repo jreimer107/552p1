@@ -14,7 +14,7 @@ module CLA_16bit(A, B, S);
   	wire [3:0] g, p;
   	wire G, P;
 
-  	CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(sub), .S(S[3:0]), .G(g[0]),
+  	CLA_4bit adder0(.A(A[3:0]), .B(B[3:0]), .c0(1'b0), .S(S[3:0]), .G(g[0]),
 		.P(p[0]));
   	CLA_4bit adder1(.A(A[7:4]), .B(B[7:4]), .c0(c1), .S(S[7:4]), .G(g[1]),
 		.P(p[1]));
@@ -48,7 +48,7 @@ module CLA_4bit(A, B, c0, S, G, P);
 
   	wire [3:0] g, p;
   	wire c1, c2, c3; //Carries to be delivered to blocks 1, 2, and 3 from logic.
-	  
+
   	CLA_1bit adder0(.a(A[0]), .b(B[0]), .cin(c0), .s(S[0]), .g(g[0]), .p(p[0]));
   	CLA_1bit adder1(.a(A[1]), .b(B[1]), .cin(c1), .s(S[1]), .g(g[1]), .p(p[1]));
   	CLA_1bit adder2(.a(A[2]), .b(B[2]), .cin(c2), .s(S[2]), .g(g[2]), .p(p[2]));
