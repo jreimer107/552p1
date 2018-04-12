@@ -50,39 +50,22 @@ module cpu(clk, rst_n, pc, hlt);
 
 
 
-	// feels bad, basically duplicated half the ID phase here
-	wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS, HLT;    
+	// feels bad, basically duplicated half the ID phase here  
    	wire op, op7to0, op7to4, op11to4, op11to8;
    	
-   	assign op = instr_ID[15:12];
+   	assign op = instr_IF[15:12];
 
-	assign ADD = 		(op == 4'b0000); // 7:0
-	assign SUB = 		(op == 4'b0001); // 7:0
-	assign RED = 		(op == 4'b0010); // 7:0 
-	assign XOR = 		(op == 4'b0011); // 7:0
-	assign SLL = 		(op == 4'b0100); // 7:4
-	assign SRA = 		(op == 4'b0101); // 7:4
-	assign ROR = 		(op == 4'b0110); // 7:4
-	assign PADDSB = 	(op == 4'b0111); // 7:0 
-	assign LW = 		(op == 4'b1000); // 11:4
-	assign SW = 		(op == 4'b1001); // 11:4
-	assign LHB = 		(op == 4'b1010); // 11:8
-	assign LLB = 		(op == 4'b1011); // 11:8
-	assign B = 			(op == 4'b1100); // none
-	assign BR = 		(op == 4'b1101); // 7:4
-	assign PCS = 		(op == 4'b1110); // none
-	assign HLT = 		(op == 4'b1111); // none
-
-	assign op7to0 = (ADD | SUB | RED | XOR | PADDSB);
-	assign op7to4 = (SLL | SRA | ROR | BR);
-	assign op11to4 = (LW | SW);
-	assign op11to8 = (LHB | LLB);
+	//Karnaugh Maps! <3
+	wire A, B, C, D;
+	assign {A,B,C,D} = op;
+	assign op7to0 = (~A & ~B) | (~A & C & D);
+	assign op7to4 = (~A & B & ~D) | (B & ~C & D);
+	assign op11to4 = A & ~B & C;
+	assign op11to8 = A & B & ~C;
 	
-	wire insert_bubble;
-	assign insert_bubble = MemOp_ID && ~MemWrite_ID && (instr_ID[11:8] == instr_IF[7:4] || instr_ID[11:8] == instr_IF[3:0]);
+	wire bubble;
 	
-	
-	assign insert_bubble = MemOp_ID && ~MemWrite_ID && 
+	assign bubble = MemOp_ID && ~MemWrite_ID && 
 		op7to0 ? (instr_ID[11:8] == instr_IF[7:4] || instr_ID[11:8] == instr_IF[3:0]) :
 		op7to4 ? (instr_ID[11:8] == instr_IF[7:4]) : 
 		op11to4 ? (instr_ID[11:8] == instr_IF[11:8] || instr_ID[11:8] == instr_IF[7:4]) : 
@@ -90,13 +73,13 @@ module cpu(clk, rst_n, pc, hlt);
 		1'b0;
 	
 		
-	wire NOP_or_instr_IF
-	assign NOP_or_instr_IF = insert_bubble ? 16'h0000 : instr_IF;
+	wire NOP_or_instr_IF;
+	assign NOP_or_instr_IF = bubble ? 16'h0000 : instr_IF;
 
 
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
-		.branch(cond_true & Branch), .stop(hlt | insert_bubble), .instr(instr_IF),
+		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
 		.pcs(pcs_IF));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
