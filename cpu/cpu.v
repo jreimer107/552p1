@@ -53,7 +53,7 @@ module cpu(clk, rst_n, pc, hlt);
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
 		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
-		.pcs(pcs_IF));
+		.pc(pc), .pcs(pcs_IF));
 
 	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID), 
 		.MemOp_ID(MemOp_ID), .MemWrite_ID(MemWrite_ID), .bubble(bubble), 

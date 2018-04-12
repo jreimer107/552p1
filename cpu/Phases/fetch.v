@@ -1,10 +1,10 @@
-module fetch(clk, rst, pc_branch, branch, stop, instr, pcs);
+module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	input clk, rst;
 	input stop, branch;
 	input [15:0] pc_branch;
-	output [15:0] pcs, instr;
+	output [15:0] pc, pcs, instr;
 
-	wire [15:0] pc, pc_inc, pc_next, increment;
+	wire [15:0] pc_inc, pc_next, increment;
 
 	//Selects next pc based on branch coditions.
 	assign pc_next = branch ? pc_branch : pc_inc;

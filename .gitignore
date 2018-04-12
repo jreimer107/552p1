@@ -9,3 +9,5 @@ work/
 *.wlf
 *.zip
 *.bak
+*.plog
+*.ptrace
