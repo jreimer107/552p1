@@ -10,7 +10,7 @@ module cpu(clk, rst_n, pc, hlt);
 
     /////////////////////////// IF SIGNALS/////////////////////////////
 	wire [15:0] instr_IF, pcs_IF;
-	wire NOP_or_instr_IF;
+	wire [15:0] NOP_or_instr_IF;
 
     ///////////////////////// ID SIGNALS/////////////////////////////
 	wire [15:0] instr_ID, pc_branch, pcs_ID;
