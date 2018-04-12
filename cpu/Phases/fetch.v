@@ -4,7 +4,7 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	input [15:0] pc_branch;
 	output [15:0] pc, pcs, instr;
 
-	wire [15:0] pc_inc, pc_next, increment;
+	wire [15:0] pc_inc, pc_next, increment, instr_raw;
 
 	//Selects next pc based on branch coditions.
 	assign pc_next = branch ? pc_branch : pc_inc;
@@ -19,8 +19,9 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	CLA_16bit incrementor(.A(increment), .B(pc), .S(pc_inc));
 
 	//Gets instruction stored at pc.
-	memory1c Imem(.data_out(instr), .data_in(), .addr(pc), .enable(1'b1),
+	memory1c Imem(.data_out(instr_raw), .data_in(), .addr(pc), .enable(1'b1),
 		.wr(1'b0), .clk(clk), .rst(rst));
 
+	assign instr = (stop | branch) ? 16'h0000 : instr_raw; 	//For instr squashing
 	assign pcs = pc_inc; //Redirect pc_inc to better name for externals.
 endmodule
