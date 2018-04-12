@@ -1,5 +1,7 @@
-module HazardDetection(intr_IF, instr_ID, bubble, NOP_or_instr_IF);
+module HazardDetection(intr_IF, instr_ID, MemOp_ID, MemWrite_ID, 
+	bubble, NOP_or_instr_IF);
 	input [15:0] instr_IF, instr_ID;
+	input MemOp_ID, MemWrite_ID;
 	output bubble, NOP_or_instr_IF;
 
 	// feels bad, basically duplicated half the ID phase here  

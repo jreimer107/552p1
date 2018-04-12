@@ -55,7 +55,8 @@ module cpu(clk, rst_n, pc, hlt);
 		.branch(cond_true & Branch), .stop(hlt | bubble), .instr(instr_IF),
 		.pcs(pcs_IF));
 
-	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID), .bubble(bubble),
+	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID), 
+		.MemOp_ID(MemOp_ID), .MemWrite_ID(MemWrite_ID), .bubble(bubble), 
 		.NOP_or_instr_IF(NOP_or_instr_IF));
 		
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
