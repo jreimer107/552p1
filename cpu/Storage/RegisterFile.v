@@ -9,10 +9,10 @@ module RegisterFile(clk, rst, SrcReg1, SrcReg2, DstReg, WriteReg, DstData, SrcDa
 	wire [15:0] readFromReg1, readFromReg2;			//The raw data read from registers. Muxed with writeline data to allow forwarding.
 	
 	//Muxes for forwarding
-	//assign SrcData1 = (SrcReg1 == DstReg && WriteReg) ? DstData : readFromReg1;
-	//assign SrcData2 = (SrcReg2 == DstReg && WriteReg) ? DstData : readFromReg2;
-	assign SrcData1 = readFromReg1;
-	assign SrcData2 = readFromReg2;
+	assign SrcData1 = (SrcReg1 == DstReg && WriteReg) ? DstData : readFromReg1;
+	assign SrcData2 = (SrcReg2 == DstReg && WriteReg) ? DstData : readFromReg2;
+	//assign SrcData1 = readFromReg1;
+	//assign SrcData2 = readFromReg2;
 	
 	//Decoders, change Src/DstReg encoded values into bitlines
 	WriteDecoder_4_16 writer(.RegId(DstReg), .WriteReg(WriteReg), .Wordline(writeline));
