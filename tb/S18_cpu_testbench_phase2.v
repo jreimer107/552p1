@@ -158,7 +158,7 @@ module cpu_ptb();
    assign MemWrite = DUT.MemWrite_MEM;
    // Is memory being written to, in this cycle (1 bit signal)
 
-   assign MemAddress = DUT.alu_out_MEM << 1;
+   assign MemAddress = DUT.alu_out_MEM;
    // If there's a memory access this cycle, this should hold the address to access memory with (for both reads and writes to memory, 16 bits)
 
    assign MemDataIn = DUT.RegData2_MEM;
