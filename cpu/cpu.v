@@ -64,6 +64,7 @@ module cpu(clk, rst_n, pc, hlt);
 	PLR_IFID plr_IF_ID(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({NOP_or_instr_IF, pcs_IF}),
 		.signals_out({instr_ID, pcs_ID})
+		);
 
 
 ///////////////////////////////////////ID///////////////////////////////////////
