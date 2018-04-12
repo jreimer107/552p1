@@ -46,14 +46,13 @@ module CLA_4bit(A, B, c0, S, G, P);
   	output [3:0] S;
   	output G, P;
 
-  	wire [3:0] g, p, S_raw;
+  	wire [3:0] g, p;
   	wire c1, c2, c3; //Carries to be delivered to blocks 1, 2, and 3 from logic.
-  	wire pos_ovfl, neg_ovfl;
-
-  	CLA_1bit adder0(.a(A[0]), .b(B[0]), .cin(c0), .s(S_raw[0]), .g(g[0]), .p(p[0]));
-  	CLA_1bit adder1(.a(A[1]), .b(B[1]), .cin(c1), .s(S_raw[1]), .g(g[1]), .p(p[1]));
-  	CLA_1bit adder2(.a(A[2]), .b(B[2]), .cin(c2), .s(S_raw[2]), .g(g[2]), .p(p[2]));
-  	CLA_1bit adder3(.a(A[3]), .b(B[3]), .cin(c3), .s(S_raw[3]), .g(g[3]), .p(p[3]));
+	  
+  	CLA_1bit adder0(.a(A[0]), .b(B[0]), .cin(c0), .s(S[0]), .g(g[0]), .p(p[0]));
+  	CLA_1bit adder1(.a(A[1]), .b(B[1]), .cin(c1), .s(S[1]), .g(g[1]), .p(p[1]));
+  	CLA_1bit adder2(.a(A[2]), .b(B[2]), .cin(c2), .s(S[2]), .g(g[2]), .p(p[2]));
+  	CLA_1bit adder3(.a(A[3]), .b(B[3]), .cin(c3), .s(S[3]), .g(g[3]), .p(p[3]));
 
   	//CLA logic
   	CLA_block logic(.g_in(g), .p_in(p), .c0(c0),
