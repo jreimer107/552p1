@@ -1,5 +1,5 @@
 module memory(clk, rst, alu_out, RegData2, MemOp, MemWrite, mem_out,
-	ForwardImm, LdByte, imm_MEM, imm_WB, imm_out;
+	ForwardImm, LdByte, imm_MEM, imm_WB, imm_out);
 	input clk, rst;
 	input MemOp, MemWrite, ForwardImm, LdByte;
 	input [15:0] alu_out, RegData2, imm_MEM, imm_WB;

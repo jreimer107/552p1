@@ -101,7 +101,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
 		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
-		.ForwardA(ForwardA), .ForwardB(ForwardB) .ForwardImm(ForwardImm));
+		.ForwardA(ForwardA), .ForwardB(ForwardB), .ForwardImm(ForwardImm));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
