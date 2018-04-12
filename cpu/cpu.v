@@ -37,6 +37,9 @@ module cpu(clk, rst_n, pc, hlt);
     ///////////////// MEM SIGNALS//////////////////////////////////////
 	wire [15:0] pcs_MEM, alu_out_MEM, RegData2_MEM, mem_out_MEM, imm_MEM, imm_out;
 	wire [3:0] Rd_MEM; //Forwarding
+	wire [3:0] op_MEM;
+	wire [15:0] alu_imm_MEM;
+
 
 	// control signals
 	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM, hlt_MEM, LdByte;
@@ -97,7 +100,7 @@ module cpu(clk, rst_n, pc, hlt);
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .ALUSrc(ALUSrc_EX), .imm(imm_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
 		.ForwardA(ForwardA), .ForwardB(ForwardB), .imm_out(imm_out),
-		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
+		.alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ), .alu_imm(alu_imm_MEM));
 
 	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
 		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
@@ -107,9 +110,9 @@ module cpu(clk, rst_n, pc, hlt);
 
 	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
 		.signals_in({pcs_EX, DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
-			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX, instr_EX[12]}),
+			RegWrite_EX, instr_EX[11:8], imm_EX, hlt_EX, instr_EX[12], instr_EX[15:12]}),
 		.signals_out({pcs_MEM, DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM, MemWrite_MEM,
-			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM, LdByte})
+			RegWrite_MEM, Rd_MEM, imm_MEM, hlt_MEM, LdByte, op_MEM})
 	);
 
 
@@ -118,7 +121,7 @@ module cpu(clk, rst_n, pc, hlt);
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
 	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM),
 	 .ForwardImm(ForwardImm), .LdByte(LdByte), .imm_MEM(imm_MEM), .imm_WB(imm_WB), 
-	 .imm_out(imm_out));
+	 .imm_out(imm_out), .op(op_MEM), .alu_imm(alu_imm_MEM));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
