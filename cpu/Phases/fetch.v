@@ -22,6 +22,6 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	memory1c Imem(.data_out(instr_raw), .data_in(), .addr(pc), .enable(1'b1),
 		.wr(1'b0), .clk(clk), .rst(rst));
 
-	assign instr = (stop | branch) ? 16'h0000 : instr_raw; 	//For instr squashing
+	assign instr = branch ? 16'h0000 : instr_raw; 	//For instr squashing
 	assign pcs = pc_inc; //Redirect pc_inc to better name for externals.
 endmodule
