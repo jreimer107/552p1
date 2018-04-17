@@ -1,3 +1,19 @@
+/* fetch
+* This module stores the PC register and changes it based on current
+* conditions. Under normal conditions, the PC will increment by 2 each
+* clock cycle. In the case of a branch, the PC will be changed to the
+* branch address. Finally, in the case of a halt or a bubble, the PC
+* will not advance. It also houses the instruction memory that the PC
+* will read instructions from.
+* @input pc_branch is the address calculated by the branch section of
+*	the ID phase (taken directly from there).
+* @input branch is a control signaling if a branch instr is in the decode
+*	phase.
+* @input stop signifies that PC advancement should be halted.
+* @output instr is the output instruction based on the current pc.
+* @output pc is the current pc, needed for top level output.
+* @output pcs is the incremented pc, used for pcs instructions.
+*/
 module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	input clk, rst;
 	input stop, branch;
