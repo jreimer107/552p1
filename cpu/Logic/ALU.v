@@ -6,49 +6,32 @@
 * @output zero signifies if the output is 0.
 * @output ovfl signifies if a CLA operation caused overflow.
 */
-module ALU(A, B, op, ovfl, out);
-  input [15:0] A, B;
-  input [3:0] op;
-  output [15:0] out;
-  output ovfl;
+module ALU(A, B, ALUop, ovfl, out);
+	input [15:0] A, B;
+	input [4:0] op;
+ 	output [15:0] out;
+	output ovfl;
 
-  wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
+	//Aluop controls
+	wire red, sub, sat;
+	wire [1:0] outputSelect, shiftop;
+	wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
 
-  localparam  ADD = 4'b0000;  //CLA
-  localparam  SUB = 4'b0001;  //CLA
-  localparam  RED = 4'b0010;  //CLA
-  localparam  XOR = 4'b0011;
-  localparam  SLL = 4'b0100;
-  localparam  SRA = 4'b0101;
-  localparam  ROR = 4'b0110;
-  localparam  PADDSB = 4'b0111; //CLA
-  localparam  MEM = 4'b10xx;
-  localparam  CTRL = 4'b11xx;
+	//Decode ALUOp
+	assign {outputSelect, sat, red, sub, shiftop} = ALUOp;
 
-  ///////////////////////CLA_16bit//////////////////////////////////////////////
-  //Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
-  wire [15:0] B_cla;
-  wire sub, sat, red;
-  assign B_cla = (op == SUB) ? ~B : 
-  				 (op[3] & ~op[2]) ? (B << 1) : 
-				   				B;
-  assign sub = (op == SUB);
-  assign sat = (op == PADDSB);
-  assign red = (op == RED);
-  CLA_ALU16 CLA(.A(A), .B(B_cla), .sub(sub), .ovfl(ovfl), .S(out_cla),
-  	.red(red), .sat(sat));
-  //////////////////////////////////////////////////////////////////////////////
+  	//Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
+  	CLA_ALU16 CLA(.A(A), .B(B_cla), .sub(sub), .red(red), .sat(sat),
+		.ovfl(ovfl), .S(out_cla));
 
-  //Shifter
-  Shifter shift(.Shift_In(A), .Shift_Val(B[3:0]), .Mode(op[1:0]), .Shift_Out(out_shift));
+  	//Computes SLL, SRA, and ROR calculations
+  	Shifter shift(.Shift_In(A), .Shift_Val(B[3:0]), .Mode(op[1:0]), .Shift_Out(out_shift));
 
-  //XOR
-  assign out_xor = A ^ B;
+  	//XOR
+  	assign out_xor = A ^ B;
 
-  //output mux
-  assign out = (op == XOR) ? out_xor :
-               (op == PADDSB) ? out_cla :
-               (~op[3] & op[2]) ? out_shift :
-                  out_cla;
-
+  	//output mux
+  	assign out = outputSelect[1] ? out_shift :
+				 outputSelect[0] ? out_xor :
+				 				   out_cla;
 endmodule

@@ -8,26 +8,21 @@
 *	to or not.
 * @output MemRead signifies if data should be read from DMemory.
 * @output MemWrite signifies if data should be written to DMemory.
-* @output ALUSrc determines if the output RegData2 from the register file or
-*	the supplied immediate should be forwarded to input B of the ALU.
-* @output ImmSize specifies whether the given immediate should be sign extended
-*	from 4, 8, or 9 bits.
 * @output DataSrc specifies where the WriteData input to the register file comes
-*	from: mem_out, alu_out, or pc_out.
+*	from: mem_out or alu_out.
 * @output BranchSrc determines whether the next instruction address is taken
 *	from pc_out, RegData2, or the supplied immediate.
 */
 module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	Branch, ImmSize, DataSrc, hlt);
 	input [3:0] op;
-	output RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc, Branch, hlt, ImmSize;
-	output [1:0] DataSrc;
+	output RegSrc, RegWrite, MemOp, MemWrite, BranchSrc, Branch, hlt, DataSrc;
 
   	// wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
     // 	HLT;
 
 
-  	wire PCS, shift, memory;
+  	//wire PCS, shift, memory;
 	wire A, B, C, D;
 	assign {A,B,C,D} = op;
 
@@ -45,11 +40,11 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
   	//  assign LLB = 		(op == 4'b1011);
   	// assign B = 			(op == 4'b1100);
   	// assign BR = 		(op == 4'b1101);
-  	assign PCS = 		A & B & C & ~D;
+  	// assign PCS = 		A & B & C & ~D;
   	// assign HLT = 		(op == 4'b1111);
 
-	assign shift = ~A & B & (~C | ~D);
-	assign memory = A & ~B;
+	// assign shift = ~A & B & (~C | ~D);
+	// assign memory = A & ~B;
 
 
   	//HB/SLOT     0       1       2      3
@@ -95,22 +90,13 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
   	//0 if ReadReg2 gets slot 3, 1 if ReadReg2 gets slot 1
   	//LLB and LHB read the current reg value and insert their immediate, so
   	//they need access to the register they will be writing to.
-	//If SW, LLB, or 
+	//If SW, LLB, or
   	assign RegSrc = A & ~B & (C | D);
 
-	//IMMFORMAT//
-	//If LHB, imm gets {instr[7:0], 8'h00}, Immformat = 3
-	//If LLB, imm gets {8'h00, instr[7:0]}, Immformat = 2
-	//If MemOp, imm gets {{8{instr[7]}}, instr[7:0]}, Immformat = 1
-	//Else imm gets {{12{instr[3]}}, instr[3:0]}, Immformat = 0
-	// assign Immformat = 	LHB ? 2'b11 :
-	// 					LLB ? 2'b10 :
-	// 					MemOp ? 2'b01 :
-	// 							2'b00;
-
-	//BYTESELECT//
-	//Whether to format for LLB or LHB
-	assign ByteSelect = D;
+	//REGWRITE//
+	//ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
+	//all 0xxx, 1000 and 1010.
+	assign RegWrite = ~A | (~B & ~D) | (~B & C) | C & ~D);
 
 	//LDBYTE//
 	//Whether current instr is either LLB or LHB
@@ -121,27 +107,11 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	assign MemOp = A & ~B & ~C;
 
 	//MEMWRITE//
-	//MemWrite is a write enable, but MemOp is the overall enable. 
+	//MemWrite is a write enable, but MemOp is the overall enable.
 	//Needs to be 0 for LW
 	//1 for SW
 	//X otherwise
 	assign MemWrite = D;
-
-	//ALUSrc//
-	// Do we need the immediate? Is it a pcs instr?
-  	assign ALUSrc = PCS ? 2'b1x :
-	  				shift | memory ? 2'b01 :
-							2'b00;
-
-	//REGWRITE//
-  	//ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
-  	//all 0xxx, 1000 and 1010.
-  	assign RegWrite = ~A | (~B & ~D) | (~B & C) | C & ~D);
-
-	//IMMSIZE//
-	//immediate of size 4 for shift and LW/SW, SE to 16 (0)
-	//size 9 elsewise (1)
-	//assign ImmSize = A & B;
 
   	//BRANCHSRC and BRANCH//
   	//BranchSrc is 0 when branching to immediate, 1 when to register.
