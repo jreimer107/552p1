@@ -11,32 +11,26 @@
 * @output cond_true is 1 when the condition given in the instruction matches the
 * 	values in the flag register.
 */
-module execute(clk, rst, instr, ALUSrc, imm, RegData1, RegData2, alu_out,
-		ForwardA, ForwardB, alu_out_MEM, imm_out, alu_imm, WriteData, NVZ);
+module execute(clk, rst, instr, RegData1, RegData2, alu_out, LdByte, MemOp,
+		ForwardA, ForwardB, alu_out_MEM, alu_imm, WriteData, NVZ);
 	input clk, rst;
-	input [15:0] instr, imm, RegData1, RegData2;
-	input ALUSrc;
+	input LdByte, MemOp;
+	input [15:0] instr, RegData1, RegData2;
 	//Forwarding inputs
 	input [1:0] ForwardA, ForwardB;
-	input [15:0] alu_out_MEM, imm_out, alu_imm, WriteData;
+	input [15:0] alu_out_MEM, WriteData;
 
 	output [15:0] alu_out;
 	output [2:0] NVZ;
 
-	wire [15:0] alu_in, alu_imm, ALUA, ALUB;
-	wire alu_ovfl;
+	wire [15:0] ALUA, ALUB;
+	wire [4:0] ALUop;
 
-	assign alu_in = ALUSrc ? imm : RegData2;
+	ALU_Control ACTL(.instr(instr), .RegData1(RegData1), .RegData2(RegData2), .pcs(pcs),
+		.LdByte(LdByte), .MemOp(MemOp), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData),
+		.ForwardA(ForwardA), .ForwardB(ForwardB), .ALUA(ALUA), .ALUB(ALUB), .ALUop(ALUop));
 
-	//Forwarding nonsense
-	assign ALUA = (ForwardA == 2'b00) ? RegData1 :
-				  (ForwardA == 2'b01) ? WriteData :
-				  						alu_imm;
-	assign ALUB = (ForwardB == 2'b00) ? alu_in :
-				  (ForwardB == 2'b01) ? WriteData :
-				  						alu_imm;
-
-	ALU alu(.A(ALUA), .B(ALUB), .op(instr[15:12]), .out(alu_out),
+	ALU alu(.A(ALUA), .B(ALUB), .ALUop(ALUop), .out(alu_out),
 		.ovfl(alu_ovfl));
 
 	flag_reg FLAG(.clk(clk), .rst(rst), .opcode(instr[15:12]),

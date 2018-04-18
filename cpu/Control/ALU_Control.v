@@ -1,4 +1,4 @@
-module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp
+module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	alu_out_MEM, WriteData, ForwardA, ForwardB, ALUA, ALUB, ALUop);
 	input [15:0] instr, RegData1, RegData2, pcs; 	//ID data inputs
 	input LdByte, MemOp;							//Control inputs
