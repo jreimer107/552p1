@@ -27,7 +27,7 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
     // 	HLT;
 
 
-  	wire shift, memory;
+  	wire PCS, shift, memory;
 	wire A, B, C, D;
 	assign {A,B,C,D} = op;
 
@@ -39,13 +39,13 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
   	// assign SRA = 		(op == 4'b0101);
   	// assign ROR = 		(op == 4'b0110);
   	// assign PADDSB = 	(op == 4'b0111);
-  	// assign LW = 		(op == 4'b1000);
-  	// assign SW = 		(op == 4'b1001);
-  	// assign LHB = 		(op == 4'b1010);
-  	// assign LLB = 		(op == 4'b1011);
+  	//  assign LW = 		(op == 4'b1000);
+  	//  assign SW = 		(op == 4'b1001);
+  	//  assign LHB = 		(op == 4'b1010);
+  	//  assign LLB = 		(op == 4'b1011);
   	// assign B = 			(op == 4'b1100);
   	// assign BR = 		(op == 4'b1101);
-  	// assign PCS = 		(op == 4'b1110);
+  	assign PCS = 		A & B & C & ~D;
   	// assign HLT = 		(op == 4'b1111);
 
 	assign shift = ~A & B & (~C | ~D);
@@ -98,8 +98,27 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	//If SW, LLB, or 
   	assign RegSrc = A & ~B & (C | D);
 
+	//IMMFORMAT//
+	//If LHB, imm gets {instr[7:0], 8'h00}, Immformat = 3
+	//If LLB, imm gets {8'h00, instr[7:0]}, Immformat = 2
+	//If MemOp, imm gets {{8{instr[7]}}, instr[7:0]}, Immformat = 1
+	//Else imm gets {{12{instr[3]}}, instr[3:0]}, Immformat = 0
+	// assign Immformat = 	LHB ? 2'b11 :
+	// 					LLB ? 2'b10 :
+	// 					MemOp ? 2'b01 :
+	// 							2'b00;
+
+	//BYTESELECT//
+	//Whether to format for LLB or LHB
+	assign ByteSelect = D;
+
+	//LDBYTE//
+	//Whether current instr is either LLB or LHB
+	assign LdByte = A & ~B & C;
+
+
 	//MEMREAD//
-	assign MemOp = LW | SW;
+	assign MemOp = A & ~B & ~C;
 
 	//MEMWRITE//
 	//MemWrite is a write enable, but MemOp is the overall enable. 
@@ -109,8 +128,10 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	assign MemWrite = D;
 
 	//ALUSrc//
-	//Do we need the immediate?
-  	assign ALUSrc = shift | memory;
+	// Do we need the immediate? Is it a pcs instr?
+  	assign ALUSrc = PCS ? 2'b1x :
+	  				shift | memory ? 2'b01 :
+							2'b00;
 
 	//REGWRITE//
   	//ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
@@ -120,23 +141,20 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	//IMMSIZE//
 	//immediate of size 4 for shift and LW/SW, SE to 16 (0)
 	//size 9 elsewise (1)
-	assign ImmSize = A & B;
+	//assign ImmSize = A & B;
 
   	//BRANCHSRC and BRANCH//
   	//BranchSrc is 0 when branching to immediate, 1 when to register.
   	//Branch is 1 when a branch instr is currently in the decode phase, else 0.
   	assign BranchSrc = D;
-  	assign Branch = B || BR;
+  	assign Branch = A & B & ~C;
 
   	//DATASRC//
-  	//00 if data from MEMORY
-  	//01 if data from PC
-  	//10 if data from immediate
-  	//11 if data from ALU
-  	assign DataSrc = LW ? 2'b00 :
-  					 PCS ? 2'b01 :
-				   	(LLB || LHB) ? 2'b10 :
-				   				 2'b11;
+  	//1 if data from MEMORY (LW)
+  	//0 if data from ALU (arith, shift, loadbyte, pcs)
+	//x if no regwrite (SW, B, BR, HLT)
+  	assign DataSrc = A & ~C;
+
   	assign hlt = &op;
 
 endmodule
