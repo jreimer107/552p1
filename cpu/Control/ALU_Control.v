@@ -78,19 +78,27 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	///////////////////////////////////////////////////////////////////////////
 
 	/////Data outputs, directly go to alu inputs/////
-	wire [15:0] RegDataA, RegDataB_raw, RegDataB, loadedByte, imm_mem, imm;
+	//Intermediate signals for ALUA and ALUB
+	wire [15:0] RegDataA_raw, RegDataA, loadedByteA;
+	wire [15:0] RegDataB_raw, RegDataB, loadedByteB, imm_mem, imm;
 
-	//A mux nice tree
-	assign RegDataA = ForwardA[1] ? alu_out_MEM :
-					  ForwardA[0] ? WriteData :
-									RegData1;
+	//A mux tree
+	//Get right register data from forwarding unit
+	assign RegDataA_raw = ForwardA[1] ? alu_out_MEM :
+						  ForwardA[0] ? WriteData :
+										RegData1;
+	//Zero proper byte of RegData for LLB/LHB (opposite byte of B)
+	assign loadedByteA = ByteSelect ? {RegDataA_raw[15:8], 8'h00} :
+									  {8'h00, RegDataA_raw[7:0]};
+	//Choose loaded byte if LLB/LHB, else choose unformatted reg data
+	assign RegDataA = LdByte ? loadedByteA : RegDataA_raw;
 	//Have to force data to 0 for pcs due to x's in pcs ISA
 	assign ALUA = pcs_select ? 16'h0000 : RegDataA;
 
 
 
-	//B Mux hell tree
-	//Decide which byte we would load to, format data
+	//B Mux tree
+	//Decide which byte to load to, format data
 	assign loadedByte = ByteSelect ? {8'h00, instr[7:0]} : {instr[7:0], 8'h00};
 	//shift immedate if memory operation, sign extend either way
 	assign imm_mem = MemOp ? {{11{instr[3]}}, instr[3:0], 1'b0} :

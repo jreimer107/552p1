@@ -11,11 +11,11 @@
 * @output cond_true is 1 when the condition given in the instruction matches the
 * 	values in the flag register.
 */
-module execute(clk, rst, instr, RegData1, RegData2, alu_out, LdByte, MemOp,
-		ForwardA, ForwardB, alu_out_MEM, alu_imm, WriteData, NVZ);
+module execute(clk, rst, instr, RegData1, RegData2, pcs, alu_out, LdByte, MemOp,
+		ForwardA, ForwardB, alu_out_MEM, WriteData, NVZ);
 	input clk, rst;
 	input LdByte, MemOp;
-	input [15:0] instr, RegData1, RegData2;
+	input [15:0] instr, RegData1, RegData2, pcs;
 	//Forwarding inputs
 	input [1:0] ForwardA, ForwardB;
 	input [15:0] alu_out_MEM, WriteData;
@@ -26,9 +26,10 @@ module execute(clk, rst, instr, RegData1, RegData2, alu_out, LdByte, MemOp,
 	wire [15:0] ALUA, ALUB;
 	wire [4:0] ALUop;
 
-	ALU_Control ACTL(.instr(instr), .RegData1(RegData1), .RegData2(RegData2), .pcs(pcs),
-		.LdByte(LdByte), .MemOp(MemOp), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData),
-		.ForwardA(ForwardA), .ForwardB(ForwardB), .ALUA(ALUA), .ALUB(ALUB), .ALUop(ALUop));
+	ALU_Control ACTL(.instr(instr), .RegData1(RegData1), .RegData2(RegData2),
+		.pcs(pcs), .LdByte(LdByte), .MemOp(MemOp), .alu_out_MEM(alu_out_MEM),
+		.WriteData(WriteData), .ForwardA(ForwardA), .ForwardB(ForwardB),
+		.ALUA(ALUA), .ALUB(ALUB), .ALUop(ALUop));
 
 	ALU alu(.A(ALUA), .B(ALUB), .ALUop(ALUop), .out(alu_out),
 		.ovfl(alu_ovfl));
