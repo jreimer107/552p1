@@ -18,11 +18,6 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	input [3:0] op;
 	output RegSrc, RegWrite, MemOp, MemWrite, BranchSrc, Branch, hlt, DataSrc;
 
-  	// wire ADD, SUB, RED, XOR, SLL, SRA, ROR, PADDSB, LW, SW, LHB, SHB, B, BR, PCS,
-    // 	HLT;
-
-
-  	//wire PCS, shift, memory;
 	wire A, B, C, D;
 	assign {A,B,C,D} = op;
 

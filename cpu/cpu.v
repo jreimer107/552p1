@@ -14,6 +14,7 @@ module cpu(clk, rst_n, pc, hlt);
     ///////////////////////// ID SIGNALS/////////////////////////////
 	wire [15:0] instr_ID, pc_branch, pcs_ID;
 	wire [15:0] RegData1_ID, RegData2_ID;
+	wire [3:0] SrcReg1_ID, SrcReg2_ID;		//Inputs for forwarding unit
 
 	// control signals
 	wire RegSrc, RegWrite_ID, MemOp_ID, MemWrite_ID, LdByte_ID,
@@ -23,6 +24,7 @@ module cpu(clk, rst_n, pc, hlt);
 	wire cond_true;
 	wire [15:0] pcs_EX, alu_out_EX, RegData1_EX, RegData2_EX;
 	wire [2:0] NVZ;
+	wire [3:0] SrcReg1_EX, SrcReg2_EX;	//Inputs for forwarding unit
 
 	//Forwarding Signals
 	wire [1:0] ForwardA, ForwardB;
@@ -75,16 +77,19 @@ module cpu(clk, rst_n, pc, hlt);
 
 	decode ID(.clk(clk), .rst(rst), .instr(instr_ID), .pcs(pcs_ID),
 		.RegSrc(RegSrc), .RegWrite(RegWrite_WB), .DstReg(Rd_WB),
-		.WriteData(WriteData), .BranchSrc(BranchSrc), .RegData1(RegData1_ID),
-		.RegData2(RegData2_ID), .pc_branch(pc_branch));
+		.WriteData(WriteData), .BranchSrc(BranchSrc), .SrcReg1(SrcReg1_ID), 
+		.SrcReg2(SrcReg2_ID), .RegData1(RegData1_ID), .RegData2(RegData2_ID), 
+		.pc_branch(pc_branch));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
-		.signals_in({instr_ID, pcs_ID, DataSrc_ID, RegWrite_ID, RegData1_ID,
-			RegData2_ID, MemOp_ID, MemWrite_ID, LdByte_ID, hlt_ID}),
-		.signals_out({instr_EX, pcs_EX, DataSrc_EX, RegWrite_EX, RegData1_EX,
-			RegData2_EX, MemOp_EX, MemWrite_EX, LdByte_EX, hlt_EX})
+		.signals_in({instr_ID, pcs_ID, SrcReg1_ID, SrcReg2_ID, DataSrc_ID, 
+			RegWrite_ID, RegData1_ID, RegData2_ID, MemOp_ID, MemWrite_ID, 
+			LdByte_ID, hlt_ID}),
+		.signals_out({instr_EX, pcs_EX, SrcReg1_EX, SrcReg2_EX, DataSrc_EX, 
+			RegWrite_EX, RegData1_EX, RegData2_EX, MemOp_EX, MemWrite_EX, 
+			LdByte_EX, hlt_EX})
 	);
 
 ///////////////////////////////////////EX///////////////////////////////////////
@@ -95,8 +100,8 @@ module cpu(clk, rst_n, pc, hlt);
 		.ForwardB(ForwardB), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
 		//might need to change to fit ldbyte
-	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(instr_EX[7:4]),
-		.idexRt(instr_EX[3:0]), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
+	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(SrcReg1_EX),
+		.idexRt(SrcReg2_EX), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
 		.ForwardA(ForwardA), .ForwardB(ForwardB));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
