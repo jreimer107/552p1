@@ -1,3 +1,23 @@
+module 3_8_Decoder(in, out);
+	input [2:0] in;
+	output [7:0] out;
+
+	wire A, B, C;
+
+	assign out[0] = ~A & ~B & ~C;
+	assign out[1] = ~A & ~B & C;
+	assign out[2] = ~A & B & ~C;
+	assign out[3] = ~A & B & C;
+	assign out[4] = A & ~B & ~C;
+	assign out[5] = A & ~B & C;
+	assign out[6] = A & B & ~C;
+	assign out[7] = A & B & C;
+
+endmodule
+
+
+
+
 //Instead of actually writing this, we wrote a program to write it for us.
 //Technology!
 module 7_128_Decoder(in, out);
