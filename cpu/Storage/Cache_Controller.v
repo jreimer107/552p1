@@ -10,9 +10,15 @@ module CacheController(clk, rst, address_in, data_in, data_out, stall);
 	//16B data -> 4b offset
 	//128 lines -> 7b index
 	//16b-4b-7b -> 5b tag
+	wire [3:0] offset;
+	wire [6:0] index;
+	wire [4:0] tag;
+	assign offset = address_in[3:0];
+	assign index = address_in[10:4];
+	assign tag = address_in[15:11];
 
-	//7:128 decoder
-	
+	wire [128:0] line;
+	7_128_Decoder decoder(.in(index), .out(line));
 
 	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write), .BlockEnable)
 
