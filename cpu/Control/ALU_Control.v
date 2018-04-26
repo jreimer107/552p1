@@ -3,7 +3,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	input [15:0] instr, RegData1, RegData2, pcs; 	//ID data inputs
 	input LdByte, MemOp;							//Control inputs
 	input [15:0] alu_out_MEM, WriteData;			//Forwarded inputs
-	input [2:0] ForwardA, ForwardB;					//forward control inputs
+	input [1:0] ForwardA, ForwardB;					//forward control inputs
 	output [15:0] ALUA, ALUB;
 	output [6:0] ALUop;
 
@@ -80,7 +80,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	/////Data outputs, directly go to alu inputs/////
 	//Intermediate signals for ALUA and ALUB
 	wire [15:0] RegDataA_raw, RegDataA, loadedByteA;
-	wire [15:0] RegDataB_raw, RegDataB, loadedByteB, imm_mem, imm;
+	wire [15:0] RegDataB_raw, RegDataB, loadedByteB, imm_mem, imm, imm_or_RegB;
 
 	//A mux tree
 	//Get right register data from forwarding unit
@@ -111,7 +111,10 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 										RegData1;
 	//Invert register data if sub operation
 	assign RegDataB = sub ?  ~RegDataB_raw : RegDataB_raw;
+	//Choose between immediate and register data
+	assign imm_or_RegB = UseImm ? loadedByteB : RegDataB;
+
 	//Replace all that crap with pcs if its a pcs instruction
-	assign ALUB = pcs_select ? pcs : RegDataB;
+	assign ALUB = pcs_select ? pcs : imm_or_RegB;
 
 endmodule
