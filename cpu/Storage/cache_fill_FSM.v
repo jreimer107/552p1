@@ -48,9 +48,9 @@
 
 
 //Devin's probably better fsm
-module cache_fill_FSM(clk, rst_n, miss_detected, miss_address, fsm_busy, write_data_array, write_tag_array,memory_address, memory_data, memory_data_valid);
+module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_data_array, write_tag_array,memory_address, memory_data, memory_data_valid);
 
-    input clk, rst_n;
+    input clk, rst;
     input miss_detected; // active high when tag match logic detects a miss
     input [15:0] miss_address; // address that missed the cache
 
@@ -65,10 +65,10 @@ module cache_fill_FSM(clk, rst_n, miss_detected, miss_address, fsm_busy, write_d
     wire [2:0] count;
     wire fsm_input;
 
-    dff             fsm(.q(fsm_input), .d(fsm_busy), .wen(1'b1), .clk(clk), .rst(~rst_n));
+    dff             fsm(.q(fsm_busy), .d(fsm_input), .wen(1'b1), .clk(clk), .rst(rst));
     counter_3bit     cc(.clk(clk), .rst(rst), .enable(memory_data_valid), .count(count));
 
-    assign fsm_input = fsm_busy ? (count == 3'h7) ? 1'b0 : 1'b1 : miss_detected;
+    assign fsm_input = fsm_busy ? ((count == 3'h7) ? 1'b0 : 1'b1) : miss_detected;
     assign memory_address = {miss_address[15:4], count, 1'b0}; 
     assign write_data_array = memory_data_valid;
     assign write_tag_array = fsm_busy & ~fsm_input;
@@ -89,8 +89,8 @@ module counter_3bit(clk, rst, enable, count);
     dff ff1(.q(adder_out[1]), .d(count[1]), .wen(enable), .clk(clk), .rst(rst));
     dff ff2(.q(adder_out[2]), .d(count[2]), .wen(enable), .clk(clk), .rst(rst));
 
-   	FA FA0(.S(adder_out[0]), .cout(adder_carry[0]), .A(count[0]), .B(1'b1), .cin(1'b0));
-    FA FA1(.S(adder_out[1]), .cout(adder_carry[1]), .A(count[0]), .B(1'b0), .cin(adder_carry[0]));
-    FA FA2(.S(adder_out[2]), .cout(/*    NC    */), .A(count[0]), .B(1'b0), .cin(adder_carry[1]));
+    FA FA0(.S(count[0]), .cout(adder_carry[0]), .A(adder_out[0]), .B(1'b1), .cin(1'b0));
+    FA FA1(.S(count[1]), .cout(adder_carry[1]), .A(adder_out[1]), .B(1'b0), .cin(adder_carry[0]));
+    FA FA2(.S(count[2]), .cout(/*    NC    */), .A(adder_out[2]), .B(1'b0), .cin(adder_carry[1]));
 
 endmodule

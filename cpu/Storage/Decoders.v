@@ -1,25 +1,18 @@
-module Decoder_4_16(in, out);
+module Decoder_3_8(in, out);
 	input [2:0] in;
 	output [7:0] out;
 
-	wire A, B, C, D;
+	wire A, B, C;
+	assign {A,B,C} = in;
 
-	assign out[000] = ~A & ~B & ~C & ~D;
-	assign out[001] = ~A & ~B & ~C &  D;
-	assign out[002] = ~A & ~B &  C & ~D;
-	assign out[003] = ~A & ~B &  C &  D;
-	assign out[004] = ~A &  B & ~C & ~D;
-	assign out[005] = ~A &  B & ~C &  D;
-	assign out[006] = ~A &  B &  C & ~D;
-	assign out[007] = ~A &  B &  C &  D;
-	assign out[008] =  A & ~B & ~C & ~D;
-	assign out[009] =  A & ~B & ~C &  D;
-	assign out[010] =  A & ~B &  C & ~D;
-	assign out[011] =  A & ~B &  C &  D;
-	assign out[012] =  A &  B & ~C & ~D;
-	assign out[013] =  A &  B & ~C &  D;
-	assign out[014] =  A &  B &  C & ~D;
-	assign out[015] =  A &  B &  C &  D;
+	assign out[000] = ~A & ~B & ~C;
+	assign out[001] = ~A & ~B &  C;
+	assign out[002] = ~A &  B & ~C;
+	assign out[003] = ~A &  B &  C;
+	assign out[004] =  A & ~B & ~C;
+	assign out[005] =  A & ~B &  C;
+	assign out[006] =  A &  B & ~C;
+	assign out[007] =  A &  B &  C;
 
 endmodule
 
@@ -33,6 +26,7 @@ module Decoder_7_128(in, out);
 	output [127:0] out;
 	
 	wire A, B, C, D, E, F, G;
+	assign {A,B,C,D,E,F,G} = in;
 
 	assign out[000] = ~A & ~B & ~C & ~D & ~E & ~F & ~G;
 	assign out[001] = ~A & ~B & ~C & ~D & ~E & ~F &  G;

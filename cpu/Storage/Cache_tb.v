@@ -8,7 +8,10 @@ module Cache_tb();
 	Cache_Controller DUT(.clk(clk), .rst(rst), .write(write), .address_in(address), 
 		.data_in(data_in), .data_out(data_out), .stall(stall));
 
-	always #5 clk = ~clk;
+	always begin
+		#5 clk = ~clk;
+		$stop();
+	end
 
 	initial begin
 		clk = 0;
@@ -18,11 +21,19 @@ module Cache_tb();
 
 		//Write something then read it
 		write = 1;
-		address = 16'h0001;
-		data_in = 16'h0005;
+		address = 16'h1234;
+		data_in = 16'h5678;
 		
 		@(negedge clk);
+		//$stop();
 		write = 0;
+		@(negedge clk);
+		write = 1;
+		address = 16'hAAAA;
+		data_in = 16'BBBB;
+		@(negedge clk);
+		
+		
 
 
 	end

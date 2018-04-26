@@ -18,13 +18,13 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 	//16B data -> 4b offset
 	//128 lines -> 7b index
 	//16b-4b-7b -> 5b tag
-	wire [3:0] offset;
+	wire [2:0] offset;
 	wire [6:0] index;
-	wire [4:0] tag;
+	wire [5:0] tag;
 
 
 	//Cache miss if block is not valid or tags do not match.
-	assign miss_detected = !tag_out[7] || (tag != tag_out);
+	assign miss_detected = !tag_out[7] || (tag != tag_out[5:0]);
 	//FSM will set fsm_busy, triggering all muxes
 
 	wire [15:0] mem_addr, addr_FSM;
@@ -32,16 +32,16 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 
 
 	//Mux between addr we want and addr FSM is updating
-	assign offset = mem_addr[3:0];
-	assign index = address_in[10:4];
-	assign tag = address_in[15:11];
+	assign offset = mem_addr[2:0];	//May need to take 1 bit right of these
+	assign index = address_in[9:3];
+	assign tag = address_in[15:10];
 
 
 	wire [127:0] line;
 	Decoder_7_128 linedecoder(.in(index), .out(line));
 
 	wire [7:0] word;
-	Decoder_4_16 worddecoder(.in(offset), .out(word));
+	Decoder_3_8 worddecoder(.in(offset), .out(word));
 
 	/* If read
 	check tag - set miss detected
@@ -86,22 +86,22 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 
 
 
-	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | Write), 
+	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | write), 
 		.BlockEnable(line), .WordEnable(word), .DataOut(data_out));
 
-	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({valid, 2'bxx, tag}), 
-		.Write(Tag_Write | (Write & !miss_detected)), .BlockEnable(line), .DataOut(tag_out));
+	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({1'b1, 1'b0, tag}), 
+		.Write(Tag_Write), .BlockEnable(line), .DataOut(tag_out));
 
 	memory4c mem(.data_out(data_bus), .data_in(data_in), .addr(mem_addr),
-		.enable(1'b1), .wr(Write & !miss_detected), .clk(clk), .rst(rst), .data_valid(data_valid));
+		.enable(1'b1), .wr(write), .clk(clk), .rst(rst), .data_valid(data_valid));
 
 	cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
 		.miss_address(address_in), .fsm_busy(fsm_busy), 
 		.write_data_array(Data_Write), .write_tag_array(Tag_Write),
-		.memory_address(addr_FSM), .memory_data(16'hzzzz));
+		.memory_address(addr_FSM), .memory_data(16'hzzzz), .memory_data_valid(data_valid));
 
 
 
-	assign stall = fsm_busy;
+	assign stall = fsm_busy | miss_detected;
 
 endmodule
