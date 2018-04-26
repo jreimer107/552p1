@@ -16,12 +16,15 @@ module ALU(A, B, ALUop, ovfl, out);
 	wire red, sub, sat;
 	wire [1:0] outputSelect, shiftop;
 	wire [15:0] out_cla, out_xor, out_shift; //Output mux inputs
+	wire [15:0] B_sub;
 
 	//Decode ALUOp
 	assign {outputSelect, sat, red, sub, shiftop} = ALUop;
 
+	assign B_sub = sub ? ~B : B;
+
   	//Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
-  	CLA_ALU16 CLA(.A(A), .B(B), .sub(sub), .red(red), .sat(sat),
+  	CLA_ALU16 CLA(.A(A), .B(B_sub), .sub(sub), .red(red), .sat(sat),
 		.ovfl(ovfl), .S(out_cla));
 
   	//Computes SLL, SRA, and ROR calculations
