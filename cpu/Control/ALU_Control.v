@@ -108,7 +108,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	//Get the right register data from forwarding unit
 	assign RegDataB_raw = ForwardB[1] ? alu_out_MEM :
 						  ForwardB[0] ? WriteData :
-										RegData1;
+										RegData2;
 	//Invert register data if sub operation
 	assign RegDataB = sub ?  ~RegDataB_raw : RegDataB_raw;
 	//Choose between immediate and register data
