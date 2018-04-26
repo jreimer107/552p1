@@ -99,12 +99,12 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 
 	//B Mux tree
 	//Decide which byte to load to, format data
-	assign loadedByte = ByteSelect ? {8'h00, instr[7:0]} : {instr[7:0], 8'h00};
+	assign loadedByteB = ByteSelect ? {8'h00, instr[7:0]} : {instr[7:0], 8'h00};
 	//shift immedate if memory operation, sign extend either way
 	assign imm_mem = MemOp ? {{11{instr[3]}}, instr[3:0], 1'b0} :
 							 {{12{instr[3]}}, instr[3:0]};
 	//Choose loaded byte if llb or lhb, else choose the memory formatted imm
-	assign imm = LdByte ? loadedByte : imm_mem;
+	assign imm = LdByte ? loadedByteB : imm_mem;
 	//Get the right register data from forwarding unit
 	assign RegDataB_raw = ForwardB[1] ? alu_out_MEM :
 						  ForwardB[0] ? WriteData :

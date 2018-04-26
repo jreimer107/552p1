@@ -21,7 +21,7 @@ module ALU(A, B, ALUop, ovfl, out);
 	assign {outputSelect, sat, red, sub, shiftop} = ALUop;
 
   	//Computes ADD, SUB, RED, PADDSB, and MEM and CTRL arithmetic operations.
-  	CLA_ALU16 CLA(.A(A), .B(B_cla), .sub(sub), .red(red), .sat(sat),
+  	CLA_ALU16 CLA(.A(A), .B(B), .sub(sub), .red(red), .sat(sat),
 		.ovfl(ovfl), .S(out_cla));
 
   	//Computes SLL, SRA, and ROR calculations

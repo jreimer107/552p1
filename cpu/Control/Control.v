@@ -14,9 +14,9 @@
 *	from pc_out, RegData2, or the supplied immediate.
 */
 module Control(op, RegSrc, RegWrite, MemOp, MemWrite, BranchSrc,
-	Branch, DataSrc, hlt);
+	Branch, DataSrc, LdByte, hlt);
 	input [3:0] op;
-	output RegSrc, RegWrite, MemOp, MemWrite, BranchSrc, Branch, hlt, DataSrc;
+	output RegSrc, RegWrite, MemOp, MemWrite, BranchSrc, Branch, hlt, DataSrc, LdByte;
 
 	wire A, B, C, D;
 	assign {A,B,C,D} = op;

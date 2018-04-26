@@ -24,7 +24,7 @@ module execute(clk, rst, instr, RegData1, RegData2, pcs, alu_out, LdByte, MemOp,
 	output [2:0] NVZ;
 
 	wire [15:0] ALUA, ALUB;
-	wire [4:0] ALUop;
+	wire [6:0] ALUop;
 
 	ALU_Control ACTL(.instr(instr), .RegData1(RegData1), .RegData2(RegData2),
 		.pcs(pcs), .LdByte(LdByte), .MemOp(MemOp), .alu_out_MEM(alu_out_MEM),
