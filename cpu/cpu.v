@@ -35,6 +35,7 @@ module cpu(clk, rst_n, pc, hlt);
     ///////////////// MEM SIGNALS//////////////////////////////////////
 	wire [15:0] alu_out_MEM, RegData2_MEM, mem_out_MEM;
 	wire [3:0] Rd_MEM; //Forwarding
+	wire stall;
 
 
 	// control signals
@@ -61,7 +62,7 @@ module cpu(clk, rst_n, pc, hlt);
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
-	PLR_IFID plr_IF_ID(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_IFID plr_IF_ID(.clk(clk), .rst(rst), .enable(~stall),
 		.signals_in({NOP_or_instr_IF, pcs_IF}),
 		.signals_out({instr_ID, pcs_ID})
 	);
@@ -83,7 +84,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_IDEX plr_ID_EX(.clk(clk), .rst(rst), .enable(~stall),
 		.signals_in({instr_ID, pcs_ID, SrcReg1_ID, SrcReg2_ID, DataSrc_ID, 
 			RegWrite_ID, RegData1_ID, RegData2_ID, MemOp_ID, MemWrite_ID, 
 			LdByte_ID, hlt_ID}),
@@ -106,7 +107,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(~stall),
 		.signals_in({DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
 			RegWrite_EX, instr_EX[11:8], hlt_EX}),
 		.signals_out({DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM,
@@ -117,11 +118,11 @@ module cpu(clk, rst_n, pc, hlt);
 ///////////////////////////////////////MEM//////////////////////////////////////
 
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
-	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM));
+	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM), .stall(stall));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(1'b1),
+	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(~stall),
 		.signals_in({alu_out_MEM, mem_out_MEM, DataSrc_MEM, RegWrite_MEM,
 			Rd_MEM, hlt_MEM}),
 		.signals_out({alu_out_WB, mem_out_WB, DataSrc_WB, RegWrite_WB, Rd_WB,

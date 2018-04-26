@@ -1,6 +1,6 @@
-module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
+module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stall);
 	input clk, rst;
-	input write;
+	input write, op;
 	input [15:0] address_in, data_in;
 	output stall;
 	output [15:0] data_out;
@@ -93,7 +93,7 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 		.Write(Tag_Write), .BlockEnable(line), .DataOut(tag_out));
 
 	memory4c mem(.data_out(data_bus), .data_in(data_in), .addr(mem_addr),
-		.enable(1'b1), .wr(write), .clk(clk), .rst(rst), .data_valid(data_valid));
+		.enable(op), .wr(write), .clk(clk), .rst(rst), .data_valid(data_valid));
 
 	cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
 		.miss_address(address_in), .fsm_busy(fsm_busy), 
