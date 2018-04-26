@@ -110,7 +110,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 					  ForwardB[0] ? WriteData :
 									RegData2;
 	//Choose between immediate and register data
-	assign imm_or_RegB = UseImm ? loadedByteB : RegDataB;
+	assign imm_or_RegB = UseImm ? imm : RegDataB;
 
 	//Replace all that crap with pcs if its a pcs instruction
 	assign ALUB = pcs_select ? pcs : imm_or_RegB;

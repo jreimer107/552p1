@@ -7,7 +7,7 @@ module Shifter (Shift_In, Shift_Val, Mode, Shift_Out);
   wire SLL, SRA, ROR;
   assign SLL = (Mode == 2'b00);
   assign SRA = (Mode == 2'b01);
-  assign ROR = (Mode == 2'b10);
+  assign ROR = (Mode == 2'b1x);
 
   wire [15:0] shift0, shift1, shift2;
   
