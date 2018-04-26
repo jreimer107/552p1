@@ -9,9 +9,8 @@
 * @output ForwardB is the input to the ALUin2 control mux.
 */
 //TODO: needs testing.
-module ForwardingUnit(instr, idexRs, idexRt, exmemWR, memwbWR, RegWrite_MEM, 
+module ForwardingUnit(idexRs, idexRt, exmemWR, memwbWR, RegWrite_MEM, 
 	RegWrite_WB, ForwardA, ForwardB);
-	input [15:0] instr;
 	input [3:0] idexRs, idexRt, exmemWR, memwbWR;
 	input RegWrite_MEM, RegWrite_WB;
 	output [1:0] ForwardA, ForwardB;
