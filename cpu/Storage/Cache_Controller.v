@@ -9,7 +9,7 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 	localparam invalid = 1'b0;
 
 	wire [15:0] data_bus;
-	wire [8:0] tag_out;	
+	wire [7:0] tag_out;	
 	wire fsm_busy, Data_Write, Tag_Write;
 	wire miss_detected;
 	wire data_valid;
@@ -41,7 +41,7 @@ module Cache_Controller(clk, rst, write, address_in, data_in, data_out, stall);
 	Decoder_7_128 linedecoder(.in(index), .out(line));
 
 	wire [7:0] word;
-	Decoder_3_8 worddecoder(.in(offset), .out(word));
+	Decoder_4_16 worddecoder(.in(offset), .out(word));
 
 	/* If read
 	check tag - set miss detected
