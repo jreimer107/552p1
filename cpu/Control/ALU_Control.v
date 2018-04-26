@@ -63,7 +63,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	assign sub = ~A & ~B & D;
 
 	//shift op is last two bits of instruction
-	assign shiftop = instr[1:0];
+	assign shiftop = instr[13:12];
 
 	//aluSelect : tell alu which result to output
 	//00 for cla
