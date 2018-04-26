@@ -45,8 +45,8 @@ module PLR_IDEX(clk, rst, enable, signals_in, signals_out);
 	input clk;
 	input rst;
 	input enable;
-	input [86:0] signals_in;
-	output [86:0] signals_out;
+	input [94:0] signals_in;
+	output [94:0] signals_out;
 
 	dff ff00(signals_out[00], signals_in[00], enable, clk, rst);
 	dff ff01(signals_out[01], signals_in[01], enable, clk, rst);
