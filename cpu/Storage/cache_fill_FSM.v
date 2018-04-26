@@ -89,8 +89,8 @@ module counter_3bit(clk, rst, enable, count);
     dff ff1(.q(adder_out[1]), .d(count[1]), .wen(enable), .clk(clk), .rst(rst));
     dff ff2(.q(adder_out[2]), .d(count[2]), .wen(enable), .clk(clk), .rst(rst));
 
-   	FA FA0(.S(adder_out[0]), .Cout(adder_carry[0]), .A(count[0]), .B(1'b1), .Cin(1'b0));
-    FA FA1(.S(adder_out[1]), .Cout(adder_carry[1]), .A(count[0]), .B(1'b0), .Cin(adder_carry[0]));
-    FA FA2(.S(adder_out[2]), .Cout(/*    NC    */), .A(count[0]), .B(1'b0), .Cin(adder_carry[1]));
+   	FA FA0(.S(adder_out[0]), .cout(adder_carry[0]), .A(count[0]), .B(1'b1), .cin(1'b0));
+    FA FA1(.S(adder_out[1]), .cout(adder_carry[1]), .A(count[0]), .B(1'b0), .cin(adder_carry[0]));
+    FA FA2(.S(adder_out[2]), .cout(/*    NC    */), .A(count[0]), .B(1'b0), .cin(adder_carry[1]));
 
 endmodule
