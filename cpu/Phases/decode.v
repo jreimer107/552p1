@@ -1,5 +1,5 @@
-module decode(clk, rst, pcs, DstReg, LdByte, RegSrc, RegWrite, BranchSrc,
-	WriteData, imm, SrcReg1, SrcReg2, RegData1, RegData2, pc_branch);
+module decode(clk, rst, instr, pcs, DstReg, LdByte, RegSrc, RegWrite, BranchSrc,
+	WriteData, SrcReg1, SrcReg2, RegData1, RegData2, pc_branch);
 	input clk, rst;
 	input [3:0] DstReg;
 	input [15:0] instr, pcs, WriteData;

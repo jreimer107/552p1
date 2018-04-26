@@ -1,4 +1,4 @@
-module 3_8_Decoder(in, out);
+module Decoder_3_8(in, out);
 	input [2:0] in;
 	output [7:0] out;
 
@@ -20,7 +20,7 @@ endmodule
 
 //Instead of actually writing this, we wrote a program to write it for us.
 //Technology!
-module 7_128_Decoder(in, out);
+module Decoder_7_128(in, out);
 	input [6:0] in;
 	output [127:0] out;
 	

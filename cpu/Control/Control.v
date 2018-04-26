@@ -13,8 +13,8 @@
 * @output BranchSrc determines whether the next instruction address is taken
 *	from pc_out, RegData2, or the supplied immediate.
 */
-module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
-	Branch, ImmSize, DataSrc, hlt);
+module Control(op, RegSrc, RegWrite, MemOp, MemWrite, BranchSrc,
+	Branch, DataSrc, hlt);
 	input [3:0] op;
 	output RegSrc, RegWrite, MemOp, MemWrite, BranchSrc, Branch, hlt, DataSrc;
 
@@ -91,7 +91,7 @@ module Control(op, RegSrc, RegWrite, MemOp, MemWrite, ALUSrc, BranchSrc,
 	//REGWRITE//
 	//ARITH, SHIFT, LW, LHB, LLB, and PCS write to register.
 	//all 0xxx, 1000 and 1010.
-	assign RegWrite = ~A | (~B & ~D) | (~B & C) | C & ~D);
+	assign RegWrite = ~A | (~B & ~D) | (~B & C) | (C & ~D);
 
 	//LDBYTE//
 	//Whether current instr is either LLB or LHB

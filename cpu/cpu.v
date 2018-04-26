@@ -22,7 +22,7 @@ module cpu(clk, rst_n, pc, hlt);
 
     ///////////////// EX SIGNALS////////////////////////////////////
 	wire cond_true;
-	wire [15:0] pcs_EX, alu_out_EX, RegData1_EX, RegData2_EX;
+	wire [15:0] instr_EX, pcs_EX, alu_out_EX, RegData1_EX, RegData2_EX;
 	wire [2:0] NVZ;
 	wire [3:0] SrcReg1_EX, SrcReg2_EX;	//Inputs for forwarding unit
 
@@ -96,7 +96,7 @@ module cpu(clk, rst_n, pc, hlt);
 
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .pcs(pcs_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
-		.LdByte(LdByte), .MemOp(MemOp), .ForwardA(ForwardA), .LdByte(LdByte_EX),
+		.LdByte(LdByte_EX), .MemOp(MemOp), .ForwardA(ForwardA),
 		.ForwardB(ForwardB), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
 		//might need to change to fit ldbyte
