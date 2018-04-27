@@ -85,13 +85,13 @@ module counter_3bit(clk, rst, enable, count);
     wire [2:0] adder_out;
     wire [1:0] adder_carry;
 
-    dff ff0(.q(adder_out[0]), .d(count[0]), .wen(enable), .clk(clk), .rst(rst));
-    dff ff1(.q(adder_out[1]), .d(count[1]), .wen(enable), .clk(clk), .rst(rst));
-    dff ff2(.q(adder_out[2]), .d(count[2]), .wen(enable), .clk(clk), .rst(rst));
+    dff ff0(.d(adder_out[0]), .q(count[0]), .wen(enable), .clk(clk), .rst(rst));
+    dff ff1(.d(adder_out[1]), .q(count[1]), .wen(enable), .clk(clk), .rst(rst));
+    dff ff2(.d(adder_out[2]), .q(count[2]), .wen(enable), .clk(clk), .rst(rst));
 
-    FA FA0(.S(count[0]), .cout(adder_carry[0]), .A(adder_out[0]), .B(1'b1), .cin(1'b0));
-    FA FA1(.S(count[1]), .cout(adder_carry[1]), .A(adder_out[1]), .B(1'b0), .cin(adder_carry[0]));
-    FA FA2(.S(count[2]), .cout(/*    NC    */), .A(adder_out[2]), .B(1'b0), .cin(adder_carry[1]));
+    FA FA0(.S(adder_out[0]), .cout(adder_carry[0]), .A(count[0]), .B(1'b1), .cin(1'b0));
+    FA FA1(.S(adder_out[1]), .cout(adder_carry[1]), .A(count[1]), .B(1'b0), .cin(adder_carry[0]));
+    FA FA2(.S(adder_out[2]), .cout(/*    NC    */), .A(count[2]), .B(1'b0), .cin(adder_carry[1]));
 
 endmodule
 
@@ -119,15 +119,17 @@ module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_dat
     localparam IDLE = 1'b0;
     localparam RQING = 1'b1;
     
-    wire rq, rq_next;
+    wire rq, rq_next, rc, rc_next;
     dff	rqing(.d(rq_next), .q(rq), .wen(1'b1), .clk(clk), .rst(rst));
-    assign rq_next = rq ? ((request == 3'h7) ? IDLE : RQING) : miss_detected; 
-    
+    dff	rcing(.d(rc_next), .q(rc), .wen(1'b1), .clk(clk), .rst(rst));
+        
+    assign rq_next = rq ? ((request == 3'h7) ? IDLE : RQING) : fsm_input & ~fsm_busy; 
+    assign rc_next = rc ? ((receive == 3'h7) ? IDLE : RQING) : (request == 3'h3);
     
     dff             fsm(.q(fsm_busy), .d(fsm_input), .wen(1'b1), .clk(clk), .rst(rst));
 	//TODO: check that request holds at 7 after reaching it until next miss
     counter_3bit	req(.clk(clk), .rst(rst), .enable(rq), .count(request));
-	counter_3bit	rec(.clk(clk), .rst(rst), .enable(memory_data_valid), .count(receive));
+	counter_3bit	rec(.clk(clk), .rst(rst), .enable(rc), .count(receive));
 
 	//FSM is busy when it hasn't recieved 8 words.
     assign fsm_input = fsm_busy ? ((receive == 3'h7) ? 1'b0 : 1'b1) : miss_detected;
