@@ -40,7 +40,7 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	//memory1c Imem(.data_out(instr_raw), .data_in(), .addr(pc), .enable(1'b1),
 	//	.wr(1'b0), .clk(clk), .rst(rst));
 
-	CacheController Imem(.clk(clk), .rst(rst), .write(1'b0), .op(1'b1),
+	Cache_Controller Imem(.clk(clk), .rst(rst), .write(1'b0), .op(1'b1),
 		.address_in(pc), .data_out(instr_raw), .data_in(16'hzzzz), .stall(stall));	
 
 	assign instr = (branch | stall) ? 16'h0000 : instr_raw; 	//For instr squashing
