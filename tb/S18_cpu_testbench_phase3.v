@@ -79,7 +79,11 @@ module cpu_ptb();
 
     always #50 begin   // delay 1/2 clock period each time thru loop
       clk = ~clk;
-	  if (~clk) $stop();
+	  //if (~clk) $stop();
+	  if(DUT.IF.Imem.miss_detected) begin
+	  		$display("MISS DETECTED");
+	  		$stop;
+	  end
     end
 	
     always @(posedge clk) begin
@@ -212,8 +216,9 @@ module cpu_ptb();
    assign DCacheHit = ~DUT.MEM.Dmem.miss_detected;
    // Signal indicating a valid data cache hit
 
-
+	
    /* Add anything else you want here */
+
 
    
 endmodule
