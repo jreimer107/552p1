@@ -81,9 +81,10 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 
 	*/
 
+	wire [15:0] mem_or_input;
+	assign mem_or_input = fsm_busy ? data_bus : data_in; 
 
-
-	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | (op & write)), 
+	DataArray data(.clk(clk), .rst(rst), .DataIn(mem_or_input), .Write(Data_Write | (op & write)), 
 		.BlockEnable(line), .WordEnable(word), .DataOut(data_out));
 
 	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({1'b1, 2'b0, tag}), 
