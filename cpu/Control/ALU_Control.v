@@ -87,6 +87,9 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	assign RegDataA_raw = ForwardA[1] ? alu_out_MEM :
 						  ForwardA[0] ? WriteData :
 										RegData1;
+	assign RegDataA_mem = MemOp ? (RegDataA_raw & 0xFFFE : RegDataA_raw);
+
+
 	//Zero proper byte of RegData for LLB/LHB (opposite byte of B)
 	assign loadedByteA = ByteSelect ? {RegDataA_raw[15:8], 8'h00} :
 									  {8'h00, RegDataA_raw[7:0]};
