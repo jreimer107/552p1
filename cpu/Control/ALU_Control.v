@@ -79,7 +79,7 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 
 	/////Data outputs, directly go to alu inputs/////
 	//Intermediate signals for ALUA and ALUB
-	wire [15:0] RegDataA_raw, RegDataA, loadedByteA;
+	wire [15:0] RegDataA_raw, RegDataA_mem, RegDataA, loadedByteA;
 	wire [15:0] RegDataB, loadedByteB, imm_mem, imm, imm_or_RegB;
 
 	//A mux tree
@@ -87,11 +87,14 @@ module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
 	assign RegDataA_raw = ForwardA[1] ? alu_out_MEM :
 						  ForwardA[0] ? WriteData :
 										RegData1;
+	assign RegDataA_mem = MemOp ? (RegDataA_raw & 0xFFFE : RegDataA_raw);
+
+
 	//Zero proper byte of RegData for LLB/LHB (opposite byte of B)
 	assign loadedByteA = ByteSelect ? {RegDataA_raw[15:8], 8'h00} :
 									  {8'h00, RegDataA_raw[7:0]};
 	//Choose loaded byte if LLB/LHB, else choose unformatted reg data
-	assign RegDataA = LdByte ? loadedByteA : RegDataA_raw;
+	assign RegDataA = LdByte ? loadedByteA : RegDataA_mem;
 	//Have to force data to 0 for pcs due to x's in pcs ISA
 	assign ALUA = pcs_select ? 16'h0000 : RegDataA;
 
