@@ -83,7 +83,7 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 
 
 
-	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | write), 
+	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | (op & write)), 
 		.BlockEnable(line), .WordEnable(word), .DataOut(data_out));
 
 	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({1'b1, 2'b0, tag}), 
@@ -103,7 +103,12 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 		.memory_address(addr_FSM), .offset(offset_FSM), .memory_data_valid(data_valid));
 
 
+	wire extra_stall, stall_in;
+	dff stalldff(.d(stall_in), .q(extra_stall), .wen(1'b1), .clk(clk), .rst(rst));
+	
 
-	assign stall = fsm_busy | miss_detected;
+	
+	assign stall_in = fsm_busy | miss_detected;
+	assign stall = stall_in | extra_stall;
 
 endmodule
