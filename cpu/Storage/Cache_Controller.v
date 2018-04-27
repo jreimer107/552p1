@@ -5,9 +5,6 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	output stall;
 	output [15:0] data_out;
 
-	localparam valid = 1'b1;
-	localparam invalid = 1'b0;
-
 	wire [15:0] data_bus;
 	wire [7:0] tag_out;	
 	wire fsm_busy, Data_Write, Tag_Write;
@@ -15,26 +12,26 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	wire data_valid;
 
 	//16b address
-	//16B data -> 4b offset
+	//16B data -> 4b offset (lsb not used)
 	//128 lines -> 7b index
 	//16b-4b-7b -> 5b tag
-	wire [2:0] offset;
+	wire [2:0] offset, offset_FSM;
 	wire [6:0] index;
-	wire [5:0] tag;
+	wire [4:0] tag;
 
 
 	//Cache miss if block is not valid or tags do not match.
-	assign miss_detected = !tag_out[7] || (tag != tag_out[5:0]);
+	assign miss_detected = op & (!tag_out[7] || (tag != tag_out[4:0]));
 	//FSM will set fsm_busy, triggering all muxes
 
+	//Mux between addr we want and addr FSM is updating
 	wire [15:0] mem_addr, addr_FSM;
 	assign mem_addr = fsm_busy ? addr_FSM : address_in;
 
-
-	//Mux between addr we want and addr FSM is updating
-	assign offset = mem_addr[2:0];	//May need to take 1 bit right of these
-	assign index = address_in[9:3];
-	assign tag = address_in[15:10];
+	//mux between word we want and word the FSM is updating
+	assign offset = fsm_busy ? offset_FSM : address_in[3:1];
+	assign index = address_in[10:4];
+	assign tag = address_in[15:11];
 
 
 	wire [127:0] line;
@@ -89,16 +86,21 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	DataArray data(.clk(clk), .rst(rst), .DataIn(data_bus), .Write(Data_Write | write), 
 		.BlockEnable(line), .WordEnable(word), .DataOut(data_out));
 
-	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({1'b1, 1'b0, tag}), 
+	MetaDataArray tags(.clk(clk), .rst(rst), .DataIn({1'b1, 2'b0, tag}), 
 		.Write(Tag_Write), .BlockEnable(line), .DataOut(tag_out));
 
 	memory4c mem(.data_out(data_bus), .data_in(data_in), .addr(mem_addr),
 		.enable(op), .wr(write), .clk(clk), .rst(rst), .data_valid(data_valid));
 
-	cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
+	// cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
+	// 	.miss_address(address_in), .fsm_busy(fsm_busy), 
+	// 	.write_data_array(Data_Write), .write_tag_array(Tag_Write),
+	// 	.memory_address(addr_FSM), .memory_data(16'hxxxx), .memory_data_valid(data_valid));
+
+	cache_fill_FSM_pipe FSMP(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
 		.miss_address(address_in), .fsm_busy(fsm_busy), 
 		.write_data_array(Data_Write), .write_tag_array(Tag_Write),
-		.memory_address(addr_FSM), .memory_data(16'hzzzz), .memory_data_valid(data_valid));
+		.memory_address(addr_FSM), .offset(offset_FSM), .memory_data_valid(data_valid));
 
 
 

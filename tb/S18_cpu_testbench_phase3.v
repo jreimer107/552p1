@@ -38,7 +38,7 @@ module cpu_ptb();
 
      
 
-   cpu DUT(.clk(clk), .rst_n(rst_n), .pc_out(PC), .hlt(Halt)); /* Instantiate your processor */
+   cpu DUT(.clk(clk), .rst_n(rst_n), .pc(PC), .hlt(Halt)); /* Instantiate your processor */
    
 
 
@@ -79,6 +79,7 @@ module cpu_ptb();
 
     always #50 begin   // delay 1/2 clock period each time thru loop
       clk = ~clk;
+	  if (~clk) $stop();
     end
 	
     always @(posedge clk) begin
@@ -178,7 +179,7 @@ module cpu_ptb();
    assign RegWrite = DUT.RegWrite_WB;
    // Is register file being written to in this cycle, one bit signal (1 means yes, 0 means no)
   
-   assign WriteRegister = DUT.Rd_Wb;
+   assign WriteRegister = DUT.Rd_WB;
    // If above is true, this should hold the name of the register being written to. (4 bit signal)
    
    assign WriteData = DUT.WriteData;
@@ -205,10 +206,10 @@ module cpu_ptb();
    assign ICacheHit = ~DUT.IF.Imem.miss_detected;
    // Signal indicating a valid instruction cache hit
 
-   assign DCacheReq = ~DUT.MEM.Imem.miss_detected;
+   assign DCacheReq = ~DUT.MEM.Dmem.miss_detected;
    // Signal indicating a valid instruction data read or write request to cache
    
-   assign DCacheHit = ~DUT.MEM.Imem.miss_detected;
+   assign DCacheHit = ~DUT.MEM.Dmem.miss_detected;
    // Signal indicating a valid data cache hit
 
 
