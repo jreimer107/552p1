@@ -115,10 +115,18 @@ module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_dat
 
     wire [2:0] request, receive;
     wire fsm_input;
-
+    
+    localparam IDLE = 1'b0;
+    localparam RQING = 1'b1;
+    
+    wire rq, rq_next;
+    dff	rqing(.q(rq_next), .d(rq), .wen(1'b1), .clk(clk), .rst(rst));
+    assign rq_next = rq ? ((request == 3'h7) ? IDLE : RQING) : miss_detected; 
+    
+    
     dff             fsm(.q(fsm_busy), .d(fsm_input), .wen(1'b1), .clk(clk), .rst(rst));
 	//TODO: check that request holds at 7 after reaching it until next miss
-    counter_3bit	req(.clk(clk), .rst(rst), .enable(fsm_busy && (request != 3'h7)), .count(request));
+    counter_3bit	req(.clk(clk), .rst(rst), .enable(rq), .count(request));
 	counter_3bit	rec(.clk(clk), .rst(rst), .enable(memory_data_valid), .count(receive));
 
 	//FSM is busy when it hasn't recieved 8 words.

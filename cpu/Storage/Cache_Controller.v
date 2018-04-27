@@ -97,7 +97,7 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	// 	.write_data_array(Data_Write), .write_tag_array(Tag_Write),
 	// 	.memory_address(addr_FSM), .memory_data(16'hxxxx), .memory_data_valid(data_valid));
 
-	cache_fill_FSM_pipe FSMP(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
+	cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
 		.miss_address(address_in), .fsm_busy(fsm_busy), 
 		.write_data_array(Data_Write), .write_tag_array(Tag_Write),
 		.memory_address(addr_FSM), .offset(offset_FSM), .memory_data_valid(data_valid));
