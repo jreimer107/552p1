@@ -120,7 +120,7 @@ module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_dat
     localparam RQING = 1'b1;
     
     wire rq, rq_next;
-    dff	rqing(.q(rq_next), .d(rq), .wen(1'b1), .clk(clk), .rst(rst));
+    dff	rqing(.d(rq_next), .q(rq), .wen(1'b1), .clk(clk), .rst(rst));
     assign rq_next = rq ? ((request == 3'h7) ? IDLE : RQING) : miss_detected; 
     
     
