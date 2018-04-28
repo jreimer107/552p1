@@ -50,14 +50,14 @@ module memory4c (data_out, data_in, addr, enable, wr, clk, rst, data_valid);
       if (rst) begin
          //load loadfile_all.img
          if (!loaded) begin
-            $readmemh("phase3_test/test4.o", mem);
+            $readmemh("test_cases/test4.o", mem);
             loaded = 1;
          end
 
       end
       else begin
          if (enable & wr) begin
-                mem[addr[ADDR_WIDTH-1 :1]] = data_in[15:0];       // The actual write
+                {mem[addr[ADDR_WIDTH-1 :1]]} = data_in[15:0];       // The actual write
          end
       end
    end

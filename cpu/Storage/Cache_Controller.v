@@ -91,7 +91,7 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 		.Write(Tag_Write), .BlockEnable(line), .DataOut(tag_out));
 
 	memory4c mem(.data_out(data_bus), .data_in(data_in), .addr(mem_addr),
-		.enable(op), .wr(write), .clk(clk), .rst(rst), .data_valid(data_valid));
+		.enable(op), .wr(write & ~fsm_busy), .clk(clk), .rst(rst), .data_valid(data_valid));
 
 	// cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected), 
 	// 	.miss_address(address_in), .fsm_busy(fsm_busy), 
@@ -107,9 +107,9 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	wire extra_stall, stall_in;
 	dff stalldff(.d(stall_in), .q(extra_stall), .wen(1'b1), .clk(clk), .rst(rst));
 	
-
+	assign stall = fsm_busy | miss_detected;
 	
-	assign stall_in = fsm_busy | miss_detected;
-	assign stall = stall_in | extra_stall;
+//	assign stall_in = fsm_busy | miss_detected;
+//	assign stall = stall_in | extra_stall;
 
 endmodule

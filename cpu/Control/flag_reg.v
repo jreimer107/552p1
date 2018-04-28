@@ -28,8 +28,16 @@ module flag_reg(clk, rst, opcode, alu_ovfl, alu_out, dis, NVZ);
 
     //FLAG inputs
     wire [2:0] NVZ_in;
+   	wire [2:0] reg_out;
+
     assign NVZ_in = {alu_out[15], alu_ovfl, ~|alu_out};
-    dff negative(.q(NVZ[2]), .d(NVZ_in[2]), .wen(WriteEn[2]), .clk(clk), .rst(rst));
-	dff overflow(.q(NVZ[1]), .d(NVZ_in[1]), .wen(WriteEn[1]), .clk(clk), .rst(rst));
-	dff zero	(.q(NVZ[0]), .d(NVZ_in[0]), .wen(WriteEn[0]), .clk(clk), .rst(rst));
+    dff negative(.q(reg_out[2]), .d(NVZ_in[2]), .wen(WriteEn[2]), .clk(clk), .rst(rst));
+	dff overflow(.q(reg_out[1]), .d(NVZ_in[1]), .wen(WriteEn[1]), .clk(clk), .rst(rst));
+	dff zero	(.q(reg_out[0]), .d(NVZ_in[0]), .wen(WriteEn[0]), .clk(clk), .rst(rst));
+	
+
+	assign NVZ = WriteEn ? reg_out : NVZ_in; // bypass reg on instructions that don't update NVZ (branches)
+	
+	
+	
 endmodule
