@@ -28,7 +28,7 @@ module execute(clk, rst, instr, RegData1, RegData2, pcs, alu_out, LdByte, MemOp,
 
 	wire dis;
 	
-	assign dis = (instr[11:8] == 4'b0000) ? 1'b1 : 1'b0;
+	assign dis = ~|instr[11:8] ? 1'b1 : 1'b0;
 
 	ALU_Control ACTL(.instr(instr), .RegData1(RegData1), .RegData2(RegData2),
 		.pcs(pcs), .LdByte(LdByte), .MemOp(MemOp), .alu_out_MEM(alu_out_MEM),
