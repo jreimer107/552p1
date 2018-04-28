@@ -84,6 +84,7 @@ module cpu_ptb();
 	  //		$display("MISS DETECTED:%x", DUT.IF.Imem.miss_detected);
 	  //		$stop;
 	  //end
+	  if (Inst == 16'hc1fc) $stop;
     end
 	
     always @(posedge clk) begin
@@ -120,7 +121,7 @@ module cpu_ptb();
             ICacheReq_count = ICacheReq_count + 1;	 	
 	 end 
 
-         $fdisplay(sim_log_file, "SIMLOG:: Cycle %d PC: %8x I: %8x R: %d %3d %8x M: %d %d %8x %8x %8x MISS:%d",
+         $fdisplay(sim_log_file, "SIMLOG:: Cycle %d PC: %8x I: %8x R: %d %3d %8x M: %d %d %8x %8x %8x IMISS:%d DMISS:%d",
                   cycle_count,
                   PC,
                   Inst,
@@ -132,7 +133,9 @@ module cpu_ptb();
                   MemAddress,
                   MemDataIn,
 		  MemDataOut,
-		  DUT.IF.Imem.miss_detected);
+		  DUT.IF.Imem.miss_detected,
+		  DUT.MEM.Dmem.miss_detected
+		  );
          if (RegWrite) begin
             $fdisplay(trace_file,"REG: %d VALUE: 0x%04x",
                       WriteRegister,
