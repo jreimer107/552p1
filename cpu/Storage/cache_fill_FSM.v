@@ -1,80 +1,4 @@
-// module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, 
-// 	write_data_array, write_tag_array, memory_address, memory_data, 
-// 	memory_data_valid);
-// 	input clk, rst;
-// 	input miss_detected; // active high when tag match logic detects a miss
-// 	input [15:0] miss_address; // address that missed the cache
-// 	output fsm_busy; // asserted while FSM is busy handling the miss (can be used as pipeline stall signal)
-// 	output write_data_array; // write enable to cache data array to signal when filling with memory_data
-// 	output write_tag_array; // write enable to cache tag array to write tag and valid bit once all words are filled in to data array
-// 	output [15:0] memory_address; // address to read from memory
-// 	input [15:0] memory_data; // data returned by memory (after  delay)
-// 	input memory_data_valid; // active high indicates valid data returning on memory bus
 
-// 	localparam IDLE = 1'b0;
-// 	localparam WAIT = 1'b1;
-
-// 	wire state, next_state;
-// 	wire [3:0] count, next_count, count_inc;
-
-// 	//State transition signals
-// 	wire idletoidle, idletowait, waittowait, waitoidle;
-// 	assign idletoidle = (state == IDLE) && ~miss_detected;
-// 	assign idletowait = (state == IDLE) && miss_detected;
-// 	assign waittowait = (state == WAIT) && ~count[3];
-// 	assign waitoidle = (state == WAIT) && count[3];
-
-// 	assign memory_address = {miss_address[15:4], count[2:0], 1'b0};
-// 	assign fsm_busy = state == WAIT;
-// 	assign write_tag_array = waitoidle;
-// 	assign write_data_array = waittowait && memory_data_valid;
-	
-// 	assign next_count = idletowait ? 4'h0 :
-// 						waittowait ? count_inc : count;
-
-// 	assign next_state = (idletowait | waittowait) ? WAIT : IDLE;
-
-
-// 	dff state_ff(.q(state), .d(next_state), .wen(1'b1), .clk(clk), .rst(rst));
-	
-// 	dff c0(.q(count[0]), .d(next_count[0]), .wen(memory_data_valid), .clk(clk), .rst(rst));
-// 	dff c1(.q(count[1]), .d(next_count[1]), .wen(memory_data_valid), .clk(clk), .rst(rst));
-// 	dff c2(.q(count[2]), .d(next_count[2]), .wen(memory_data_valid), .clk(clk), .rst(rst));
-// 	dff c3(.q(count[3]), .d(next_count[3]), .wen(memory_data_valid), .clk(clk), .rst(rst));
-
-// 	CLA_4bit incrementor(.A(count), .B(4'h1), .cin(1'b0), .s(count_inc), .G(), .P());
-
-// endmodule
-
-
-//Devin's probably better fsm
-// module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_data_array, write_tag_array,memory_address, memory_data, memory_data_valid);
-
-//     input clk, rst;
-//     input miss_detected; // active high when tag match logic detects a miss
-//     input [15:0] miss_address; // address that missed the cache
-
-//     input [15:0] memory_data; // data returned by memory (after  delay)
-//     input memory_data_valid; // active high indicates valid data returning on memory bus
-
-//     output fsm_busy; // asserted while FSM is busy handling the miss (can be used as pipeline stall signal)
-//     output write_data_array; // write enable to cache data array to signal when filling with memory_data
-//     output write_tag_array; // write enable to cache tag array to write tag and valid bit once all words are filled in to data array
-//     output [15:0] memory_address; // address to read from memory
-
-//     wire [2:0] count;
-//     wire fsm_input;
-
-//     dff             fsm(.q(fsm_busy), .d(fsm_input), .wen(1'b1), .clk(clk), .rst(rst));
-//     counter_3bit     cc(.clk(clk), .rst(rst), .enable(memory_data_valid), .count(count));
-
-//     assign fsm_input = fsm_busy ? ((count == 3'h7) ? 1'b0 : 1'b1) : miss_detected;
-//     assign memory_address = {miss_address[15:4], count, 1'b0}; 
-//     assign write_data_array = memory_data_valid & fsm_busy;
-//     assign write_tag_array = fsm_busy & ~fsm_input;
-
-
-// endmodule
 
 module counter_3bit(clk, rst, enable, count);
 
@@ -127,7 +51,6 @@ module cache_fill_FSM(clk, rst, miss_detected, miss_address, fsm_busy, write_dat
     assign rc_next = rc ? ((receive == 3'h7) ? IDLE : RQING) : (request == 3'h3);
     
     dff             fsm(.q(fsm_busy), .d(fsm_input), .wen(1'b1), .clk(clk), .rst(rst));
-	//TODO: check that request holds at 7 after reaching it until next miss
     counter_3bit	req(.clk(clk), .rst(rst), .enable(rq), .count(request));
 	counter_3bit	rec(.clk(clk), .rst(rst), .enable(rc), .count(receive));
 

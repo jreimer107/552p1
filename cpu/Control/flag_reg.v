@@ -35,14 +35,11 @@ module flag_reg(clk, rst, opcode, alu_ovfl, alu_out, dis, NVZ);
 	dff overflow(.q(reg_out[1]), .d(NVZ_in[1]), .wen(WriteEn[1]), .clk(clk), .rst(rst));
 	dff zero	(.q(reg_out[0]), .d(NVZ_in[0]), .wen(WriteEn[0]), .clk(clk), .rst(rst));
 	
-//	dff oldnegative(.q(reg_out[2]), .d(reg_out[2]), .wen(WriteEn[2]), .clk(clk), .rst(rst));
-//	dff oldoverflow(.q(reg_out[2]), .d(reg_out[1]), .wen(WriteEn[1]), .clk(clk), .rst(rst));
-//	dff oldzero	   (.q(reg_out[2]), .d(reg_out[0]), .wen(WriteEn[0]), .clk(clk), .rst(rst));
-	
 	
 
-	assign NVZ = WriteEn ? NVZ_in : reg_out; // bypass reg on instructions that don't update NVZ (branches)
-	
+	assign NVZ[0] = WriteEn[0] ? NVZ_in : reg_out; // bypass reg on instructions that don't update NVZ (branches)
+	assign NVZ[1] = WriteEn[1] ? NVZ_in : reg_out;
+	assign NVZ[2] = WriteEn[2] ? NVZ_in : reg_out;
 	
 	
 endmodule
