@@ -85,7 +85,7 @@ module cpu_ptb();
 	  //		$stop;
 	  //end
 	  //if ((Inst == 16'hb580) && ~clk) $stop;
-	  if (PC >= 16'h001c && ~clk) $stop;
+	  //if (PC >= 16'h001c && ~clk) $stop;
    
     end
 	
@@ -139,18 +139,19 @@ module cpu_ptb();
 		  DUT.MEM.Dmem.miss_detected
 		  );
          if (RegWrite) begin
-            $fdisplay(trace_file,"REG: %d VALUE: 0x%04x",
+            $fdisplay(trace_file,"Cycle: %d REG: %d VALUE: 0x%04x",
+                      cycle_count,
                       WriteRegister,
                       WriteData );            
          end
          if (MemRead) begin
-            $fdisplay(trace_file,"LOAD: ADDR: 0x%04x VALUE: 0x%04x",
-                      MemAddress, MemDataOut );
+            $fdisplay(trace_file,"Cycle: %d LOAD: ADDR: 0x%04x VALUE: 0x%04x",
+                      cycle_count, MemAddress, MemDataOut );
          end
 
          if (MemWrite) begin
-            $fdisplay(trace_file,"STORE: ADDR: 0x%04x VALUE: 0x%04x",
-                      MemAddress, MemDataIn  );
+            $fdisplay(trace_file,"Cycle: %d STORE: ADDR: 0x%04x VALUE: 0x%04x",
+                      cycle_count, MemAddress, MemDataIn  );
          end
          if (Halt) begin
             $fdisplay(sim_log_file, "SIMLOG:: Processor halted\n");
