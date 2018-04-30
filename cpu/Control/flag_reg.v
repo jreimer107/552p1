@@ -37,9 +37,9 @@ module flag_reg(clk, rst, opcode, alu_ovfl, alu_out, dis, NVZ);
 	
 	
 
-	assign NVZ[0] = WriteEn[0] ? NVZ_in : reg_out; // bypass reg on instructions that don't update NVZ (branches)
-	assign NVZ[1] = WriteEn[1] ? NVZ_in : reg_out;
-	assign NVZ[2] = WriteEn[2] ? NVZ_in : reg_out;
+	assign NVZ[0] = WriteEn[0] ? NVZ_in[0] : reg_out[0]; // bypass reg on instructions that don't update NVZ (branches)
+	assign NVZ[1] = WriteEn[1] ? NVZ_in[1] : reg_out[1];
+	assign NVZ[2] = WriteEn[2] ? NVZ_in[2] : reg_out[2];
 	
 	
 endmodule
