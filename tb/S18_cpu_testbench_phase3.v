@@ -84,7 +84,7 @@ module cpu_ptb();
 	  //		$display("MISS DETECTED:%x", DUT.IF.Imem.miss_detected);
 	  //		$stop;
 	  //end
-	  //if ((Inst == 16'h1113) && ~clk) $stop;
+	  if ((Inst == 16'hb580) && ~clk) $stop;
     end
 	
     always @(posedge clk) begin
