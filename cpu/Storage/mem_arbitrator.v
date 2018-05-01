@@ -15,7 +15,8 @@ module 	mem_arbitrator(
 );
 
 	input clk, rst;
-	input [15:0] data_out, data_in;
+	input [15:0] data_in;
+	output[15:0] data_out;
 	input [15:0] iaddr, daddr;
 	input irequest, drequest;
 	output iservice, dservice;
