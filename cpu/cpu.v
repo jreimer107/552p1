@@ -101,8 +101,8 @@ module cpu(clk, rst_n, pc, hlt);
 		.ForwardB(ForwardB), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
 
 		//might need to change to fit ldbyte
-	ForwardingUnit fwu(.exmemWR(Rd_MEM), .memwbWR(Rd_WB), .idexRs(SrcReg1_EX),
-		.idexRt(SrcReg2_EX), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
+	ForwardingUnit fwu(.Rd_MEM(Rd_MEM), .Rd_WB(Rd_WB), .Rs_EX(SrcReg1_EX),
+		.Rt_EX(SrcReg2_EX), .RegWrite_MEM(RegWrite_MEM), .RegWrite_WB(RegWrite_WB),
 		.ForwardA(ForwardA), .ForwardB(ForwardB));
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
