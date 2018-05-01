@@ -10,19 +10,19 @@ module 	mem_arbitrator(
 	iservice,
 	dservice,
 	data_valid,
-	enable,
+	MemOp_MEM,
 	write
 );
 
 	input clk, rst;
 	input [15:0] data_out, data_in;
 	input [15:0] iaddr, daddr;
-	output [15:0] addr_out;
 	input irequest, drequest;
 	output iservice, dservice;
 	output data_valid;
+	input MemOp_MEM, write;
 
-	wire addr;
+	wire [15:0] addr;
 	assign addr = iservice ? iaddr : daddr; // stores always come from dcache
 	assign iservice = irequest;
 	assign dservice = ~irequest & drequest;
@@ -33,7 +33,7 @@ module 	mem_arbitrator(
 		.data_out(data_out),
 		.data_in(data_in),
 		.addr(addr),
-		.enable(enable),
+		.enable(MemOp_MEM | irequest),
 		.wr(write),
 		.data_valid(data_valid)
 	);

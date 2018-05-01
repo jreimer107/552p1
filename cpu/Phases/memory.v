@@ -1,4 +1,4 @@
-module memory(clk, rst, alu_out, RegData2, MemOp, MemWrite, mem_out, stall
+module memory(clk, rst, alu_out, RegData2, MemOp, MemWrite, mem_out, stall,
 	service, data_from_mem, data_valid, addr_to_mem, miss_detected);
 
 	input clk, rst;
@@ -18,10 +18,10 @@ module memory(clk, rst, alu_out, RegData2, MemOp, MemWrite, mem_out, stall
 	// memory1c DMem(.data_out(mem_out), .data_in(RegData2), .addr(alu_out),
 	// .enable(MemOp), .wr(MemWrite), .clk(clk), .rst(rst));
 
-	Cache_Controller Imem(.clk(clk), .rst(rst), .write(MemWrite), .op(MemOp),
+	Cache_Controller Dmem(.clk(clk), .rst(rst), .write(MemWrite), .op(MemOp),
 		.address_in(alu_out), .data_out(mem_out), .data_in(RegData2), .stall(stall),
-		.service(service), .data_from_mem(data_from_mem), data_valid(data_valid), 
-		.addr_to_mem(addr_to_mem), miss_detected(miss_detected));
+		.service(service), .data_from_mem(data_from_mem), .data_valid(data_valid), 
+		.addr_to_mem(addr_to_mem), .miss_detected(miss_detected));
 
 
 endmodule

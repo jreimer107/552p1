@@ -46,8 +46,8 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs,
 
 	Cache_Controller Imem(.clk(clk), .rst(rst), .write(1'b0), .op(1'b1),
 		.address_in(pc), .data_out(instr_raw), .data_in(16'hzzzz), .stall(stall),
-		.service(service), .data_from_mem(data_from_mem), data_valid(data_valid), 
-		.addr_to_mem(addr_to_mem), miss_detected(miss_detected));	
+		.service(service), .data_from_mem(data_from_mem), .data_valid(data_valid), 
+		.addr_to_mem(addr_to_mem), .miss_detected(miss_detected));	
 
 	assign instr = (branch | stall) ? 16'h0000 : instr_raw; 	//For instr squashing
 	assign pcs = pc_inc; //Redirect pc_inc to better name for externals.

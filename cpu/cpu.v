@@ -140,7 +140,9 @@ module cpu(clk, rst_n, pc, hlt);
 		.drequest(drequest),
 		.iservice(iservice),
 		.dservice(dservice),
-		.data_valid(data_valid)	
+		.data_valid(data_valid),
+		.MemOp_MEM(MemOp_MEM),
+		.write(MemWrite_MEM)
 	);
 	
 
