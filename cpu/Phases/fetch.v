@@ -14,11 +14,19 @@
 * @output pc is the current pc, needed for top level output.
 * @output pcs is the incremented pc, used for pcs instructions.
 */
-module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
+module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs,
+	service, data_from_mem, data_valid, addr_to_mem, miss_detected);
+
 	input clk, rst;
 	input stop, branch;
 	input [15:0] pc_branch;
 	output [15:0] pc, pcs, instr;
+
+	//Signals to arbitrator
+	input service, data_valid;
+	input [15:0] data_from_mem;
+	output [15:0] addr_to_mem;
+	output miss_detected;
 
 	wire stall;
 
@@ -36,12 +44,10 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs);
 	//Makes pc_inc out of pc.
 	CLA_16bit incrementor(.A(increment), .B(pc), .S(pc_inc));
 
-	//Gets instruction stored at pc.
-	//memory1c Imem(.data_out(instr_raw), .data_in(), .addr(pc), .enable(1'b1),
-	//	.wr(1'b0), .clk(clk), .rst(rst));
-
 	Cache_Controller Imem(.clk(clk), .rst(rst), .write(1'b0), .op(1'b1),
-		.address_in(pc), .data_out(instr_raw), .data_in(16'hzzzz), .stall(stall));	
+		.address_in(pc), .data_out(instr_raw), .data_in(16'hzzzz), .stall(stall),
+		.service(service), .data_from_mem(data_from_mem), data_valid(data_valid), 
+		.addr_to_mem(addr_to_mem), miss_detected(miss_detected));	
 
 	assign instr = (branch | stall) ? 16'h0000 : instr_raw; 	//For instr squashing
 	assign pcs = pc_inc; //Redirect pc_inc to better name for externals.

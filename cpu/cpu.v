@@ -41,6 +41,10 @@ module cpu(clk, rst_n, pc, hlt);
 	// control signals
 	wire MemOp_MEM, MemWrite_MEM, RegWrite_MEM, hlt_MEM, DataSrc_MEM;
 
+	//arbitater signals
+	wire iservice, dservice, data_valid, irequest, drequest;
+	wire [15:0] mem_data, iaddr, daddr;
+
     //////////////////////////// WB SIGNALS///////////////////////////
 	wire [15:0] alu_out_WB, mem_out_WB, WriteData;
 	wire [3:0] Rd_WB; //Forwarding
@@ -53,7 +57,8 @@ module cpu(clk, rst_n, pc, hlt);
 ///////////////////////////////////////IF///////////////////////////////////////
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
 		.branch(cond_true & Branch), .stop(hlt_WB | bubble | stall), .instr(instr_IF),
-		.pc(pc), .pcs(pcs_IF));
+		.pc(pc), .pcs(pcs_IF), .service(iservice), .data_from_mem(mem_data), 
+		.data_valid(data_valid), .addr_to_mem(iaddr), .miss_detected(irequest));
 
 	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID),
 		.MemOp_ID(MemOp_ID), .MemWrite_ID(MemWrite_ID), .bubble(bubble),
@@ -120,20 +125,21 @@ module cpu(clk, rst_n, pc, hlt);
 ///////////////////////////////////////MEM//////////////////////////////////////
 
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
-	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM), .stall(stall));
+	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM), .stall(stall), 
+	 .service(dservice), .data_from_mem(mem_data), .data_valid(data_valid), 
+	 .addr_to_mem(daddr), .miss_detected(drequest));
 
-	mem_arbitrator(
+	mem_arbitrator arbitater(
 		.clk(clk),
 		.rst(rst),
-		.data_out(/*TODO goto  both caches*/),
-		.data_in(), // icache never writes
-		.iaddr(),
-		.daddr(),
-		.addr_out(),
-		.irequest(),
-		.drequest(),
-		.iservice(),
-		.dservice(),
+		.data_out(mem_data),
+		.data_in(RegData2_MEM), // icache never writes
+		.iaddr(iaddr),
+		.daddr(daddr),
+		.irequest(irequest),
+		.drequest(drequest),
+		.iservice(iservice),
+		.dservice(dservice),
 		.data_valid(data_valid)	
 	);
 	
