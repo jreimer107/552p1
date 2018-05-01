@@ -1,10 +1,10 @@
 module ALU_Control(instr, RegData1, RegData2, pcs, LdByte, MemOp,
-	alu_out_MEM, WriteData, ForwardA, ForwardB, ALUA, ALUB, ALUop);
+	alu_out_MEM, WriteData, ForwardA, ForwardB, ALUA, ALUB, ALUop, RegDataB);
 	input [15:0] instr, RegData1, RegData2, pcs; 	//ID data inputs
 	input LdByte, MemOp;							//Control inputs
 	input [15:0] alu_out_MEM, WriteData;			//Forwarded inputs
 	input [1:0] ForwardA, ForwardB;					//forward control inputs
-	output [15:0] ALUA, ALUB;
+	output [15:0] ALUA, ALUB, RegDataB;
 	output [6:0] ALUop;
 
 	wire A, B, C, D;

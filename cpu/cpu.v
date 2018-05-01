@@ -95,10 +95,12 @@ module cpu(clk, rst_n, pc, hlt);
 
 ///////////////////////////////////////EX///////////////////////////////////////
 
+	wire [15:0] RegDataB;
+
 	execute EX(.clk(clk), .rst(rst), .instr(instr_EX), .pcs(pcs_EX),
 		.RegData1(RegData1_EX), .RegData2(RegData2_EX), .alu_out(alu_out_EX),
 		.LdByte(LdByte_EX), .MemOp(MemOp_EX), .ForwardA(ForwardA),
-		.ForwardB(ForwardB), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ));
+		.ForwardB(ForwardB), .alu_out_MEM(alu_out_MEM), .WriteData(WriteData), .NVZ(NVZ), .RegDataB(RegDataB));
 
 		//might need to change to fit ldbyte
 	ForwardingUnit fwu(.Rd_MEM(Rd_MEM), .Rd_WB(Rd_WB), .Rs_EX(SrcReg1_EX),
@@ -108,7 +110,7 @@ module cpu(clk, rst_n, pc, hlt);
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PLR_EXMEM plr_EX_MEM(.clk(clk), .rst(rst), .enable(~stall),
-		.signals_in({DataSrc_EX, alu_out_EX, RegData2_EX, MemOp_EX, MemWrite_EX,
+		.signals_in({DataSrc_EX, alu_out_EX, RegDataB, MemOp_EX, MemWrite_EX,
 			RegWrite_EX, instr_EX[11:8], hlt_EX}),
 		.signals_out({DataSrc_MEM, alu_out_MEM, RegData2_MEM, MemOp_MEM,
 			MemWrite_MEM, RegWrite_MEM, Rd_MEM, hlt_MEM})
