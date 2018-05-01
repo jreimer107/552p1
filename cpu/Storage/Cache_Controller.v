@@ -10,12 +10,12 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	input service, data_valid;
 	input [15:0] data_from_mem;
 	output [15:0] addr_to_mem;
-	output miss_detected;
+	output fsm_busy;
 
 
 	//FSM signals
 	wire [7:0] tag_out;	
-	wire fsm_busy, Data_Write, Tag_Write;
+	wire miss_detected, Data_Write, Tag_Write;
 
 	//16b address
 	//16B data -> 4b offset (lsb not used)

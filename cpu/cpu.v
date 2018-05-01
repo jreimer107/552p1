@@ -58,7 +58,7 @@ module cpu(clk, rst_n, pc, hlt);
 	fetch IF(.clk(clk), .rst(rst), .pc_branch(pc_branch),
 		.branch(cond_true & Branch), .stop(hlt_WB | bubble | stall), .instr(instr_IF),
 		.pc(pc), .pcs(pcs_IF), .service(iservice), .data_from_mem(mem_data), 
-		.data_valid(data_valid), .addr_to_mem(iaddr), .miss_detected(irequest));
+		.data_valid(data_valid), .addr_to_mem(iaddr), .fsm_busy(irequest));
 
 	HazardDetection HZD(.instr_IF(instr_IF), .instr_ID(instr_ID),
 		.MemOp_ID(MemOp_ID), .MemWrite_ID(MemWrite_ID), .bubble(bubble),
@@ -127,7 +127,7 @@ module cpu(clk, rst_n, pc, hlt);
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
 	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM), .stall(stall), 
 	 .service(dservice), .data_from_mem(mem_data), .data_valid(data_valid), 
-	 .addr_to_mem(daddr), .miss_detected(drequest));
+	 .addr_to_mem(daddr), .fsm_busy(drequest));
 
 	mem_arbitrator arbitater(
 		.clk(clk),

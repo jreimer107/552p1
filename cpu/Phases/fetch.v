@@ -15,7 +15,7 @@
 * @output pcs is the incremented pc, used for pcs instructions.
 */
 module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs,
-	service, data_from_mem, data_valid, addr_to_mem, miss_detected);
+	service, data_from_mem, data_valid, addr_to_mem, fsm_busy);
 
 	input clk, rst;
 	input stop, branch;
@@ -26,7 +26,7 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs,
 	input service, data_valid;
 	input [15:0] data_from_mem;
 	output [15:0] addr_to_mem;
-	output miss_detected;
+	output fsm_busy;
 
 	wire stall;
 
@@ -47,7 +47,7 @@ module fetch(clk, rst, pc_branch, branch, stop, instr, pc, pcs,
 	Cache_Controller Imem(.clk(clk), .rst(rst), .write(1'b0), .op(1'b1),
 		.address_in(pc), .data_out(instr_raw), .data_in(16'hzzzz), .stall(stall),
 		.service(service), .data_from_mem(data_from_mem), .data_valid(data_valid), 
-		.addr_to_mem(addr_to_mem), .miss_detected(miss_detected));	
+		.addr_to_mem(addr_to_mem), .fsm_busy(fsm_busy));	
 
 	assign instr = (branch | stall) ? 16'h0000 : instr_raw; 	//For instr squashing
 	assign pcs = pc_inc; //Redirect pc_inc to better name for externals.
