@@ -16,9 +16,9 @@ module flag_reg(clk, rst, opcode, alu_ovfl, alu_out, dis, NVZ);
     // localparam  SLL = 4'b0100;
     // localparam  SRA = 4'b0101;
     // localparam  ROR = 4'b0110;
-	// assign WriteEn = dis ? 3'b000 : (opcode == ADD || opcode == SUB) ? 3'b111 :
-	//     (opcode == XOR || opcode == SLL || opcode == SRA || opcode == ROR) ? 3'b001 : 
-    //         3'b000;
+	//assign WriteEn = dis ? 3'b000 : (opcode == ADD || opcode == SUB) ? 3'b111 :
+	//    (opcode == XOR || opcode == SLL || opcode == SRA || opcode == ROR) ? 3'b001 : 
+    //        3'b000;
 
     //Write Enables to FLAG register
     wire [2:0] WriteEn; //NVZ order

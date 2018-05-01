@@ -84,7 +84,9 @@ module cpu_ptb();
 	  //		$display("MISS DETECTED:%x", DUT.IF.Imem.miss_detected);
 	  //		$stop;
 	  //end
-	  //if ((Inst == 16'h1113) && ~clk) $stop;
+	  //if ((Inst == 16'hb580) && ~clk) $stop;
+	  //if (PC >= 16'h001c && ~clk) $stop;
+   
     end
 	
     always @(posedge clk) begin
@@ -121,7 +123,7 @@ module cpu_ptb();
             ICacheReq_count = ICacheReq_count + 1;	 	
 	 end 
 
-         $fdisplay(sim_log_file, "SIMLOG:: Cycle %d PC: %8x I: %8x R: %d %3d %8x M: %d %d %8x %8x %8x IMISS:%d DMISS:%d",
+         $fdisplay(sim_log_file, "SIMLOG:: Cycle %d PC: %8x I: %8x R: %d %3d %8x M: %d %d ADDR:%8x DATAIN:%8x DATAOUT:%8x IMISS:%d DMISS:%d",
                   cycle_count,
                   PC,
                   Inst,
@@ -137,18 +139,19 @@ module cpu_ptb();
 		  DUT.MEM.Dmem.miss_detected
 		  );
          if (RegWrite) begin
-            $fdisplay(trace_file,"REG: %d VALUE: 0x%04x",
+            $fdisplay(trace_file,"Cycle: %d REG: %d VALUE: 0x%04x",
+                      cycle_count,
                       WriteRegister,
                       WriteData );            
          end
          if (MemRead) begin
-            $fdisplay(trace_file,"LOAD: ADDR: 0x%04x VALUE: 0x%04x",
-                      MemAddress, MemDataOut );
+            $fdisplay(trace_file,"Cycle: %d LOAD: ADDR: 0x%04x VALUE: 0x%04x",
+                      cycle_count, MemAddress, MemDataOut );
          end
 
          if (MemWrite) begin
-            $fdisplay(trace_file,"STORE: ADDR: 0x%04x VALUE: 0x%04x",
-                      MemAddress, MemDataIn  );
+            $fdisplay(trace_file,"Cycle: %d STORE: ADDR: 0x%04x VALUE: 0x%04x",
+                      cycle_count, MemAddress, MemDataIn  );
          end
          if (Halt) begin
             $fdisplay(sim_log_file, "SIMLOG:: Processor halted\n");
