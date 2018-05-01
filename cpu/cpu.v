@@ -122,6 +122,22 @@ module cpu(clk, rst_n, pc, hlt);
 	memory MEM(.clk(clk), .rst(rst), .alu_out(alu_out_MEM), .RegData2(RegData2_MEM),
 	 .MemOp(MemOp_MEM), .MemWrite(MemWrite_MEM), .mem_out(mem_out_MEM), .stall(stall));
 
+	mem_arbitrator(
+		.clk(clk),
+		.rst(rst),
+		.data_out(/*TODO goto  both caches*/),
+		.data_in(), // icache never writes
+		.iaddr(),
+		.daddr(),
+		.addr_out(),
+		.irequest(),
+		.drequest(),
+		.iservice(),
+		.dservice(),
+		.data_valid(data_valid)	
+	);
+	
+
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	PLR_MEMWB plr_MEM_WB(.clk(clk), .rst(rst), .enable(~stall),
