@@ -1,5 +1,5 @@
 module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stall,
-	service, data_from_mem, data_valid, addr_to_mem, miss_detected);
+	service, data_from_mem, data_valid, addr_to_mem, fsm_busy);
 	input clk, rst;
 	input write, op;
 	input [15:0] address_in, data_in;
@@ -59,7 +59,7 @@ module Cache_Controller(clk, rst, write, op, address_in, data_in, data_out, stal
 	// memory4c mem(.data_out(data_mem), .data_in(data_in), .addr(mem_addr),
 	// 	.enable(op), .wr(write & ~fsm_busy), .clk(clk), .rst(rst), .data_valid(data_valid));
 
-	cache_fill_FSM FSM(.clk(clk), .rst(rst), 
+	cache_fill_FSM FSM(.clk(clk), .rst(rst), .miss_detected(miss_detected),
 		.miss_address(address_in), .fsm_busy(fsm_busy), .service(service),
 		.write_data_array(Data_Write), .write_tag_array(Tag_Write),
 		.memory_address(addr_FSM), .offset(offset_FSM), .memory_data_valid(data_valid));

@@ -1,12 +1,13 @@
 //Memory can recieve pipelined read requests, so we increment the memory read address every cycle
 //while only incrementing the data cache write addresss every time we get valid data.
 module cache_fill_FSM(clk, rst, miss_address, fsm_busy, write_data_array, write_tag_array, 
-	memory_address, offset, memory_data_valid, service);
+	memory_address, offset, memory_data_valid, service, miss_detected);
 
     input clk, rst;
     input [15:0] miss_address; // address that missed the cache
 	input service;
     input memory_data_valid; // active high indicates valid data returning on memory bus
+	input miss_detected;
 
     output fsm_busy; // asserted while FSM is busy handling the miss (can be used as pipeline stall signal)
     output write_data_array; // write enable to cache data array to signal when filling with memory_data
@@ -32,7 +33,7 @@ module cache_fill_FSM(clk, rst, miss_address, fsm_busy, write_data_array, write_
 	counter_3bit	rec(.clk(clk), .rst(rst), .enable(rc & service), .count(receive));
 
 	//FSM is busy when it hasn't recieved 8 words.
-    assign fsm_input = fsm_busy ? ((receive == 3'h7) ? 1'b0 : 1'b1) : service;
+    assign fsm_input = fsm_busy ? ((receive == 3'h7) ? 1'b0 : 1'b1) : miss_detected;
 	//Mem address is given pipelined requests every clock cycle
     assign memory_address = {miss_address[15:4], request, 1'b0}; 
 	//Data cache offset is only incremented when data is received

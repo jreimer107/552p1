@@ -34,7 +34,7 @@ module 	mem_arbitrator(
 		.data_in(data_in),
 		.addr(addr),
 		.enable(MemOp_MEM | irequest),
-		.wr(write),
+		.wr(write & ~irequest & ~drequest),
 		.data_valid(data_valid)
 	);
 	
