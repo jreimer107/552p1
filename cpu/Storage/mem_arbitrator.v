@@ -5,7 +5,6 @@ module 	mem_arbitrator(
 	data_in, // only one, as icache never writes to mem
 	iaddr,
 	daddr,
-	addr_out,
 	irequest,
 	drequest,
 	iservice,
