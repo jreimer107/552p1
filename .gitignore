@@ -9,5 +9,4 @@ work/
 *.wlf
 *.zip
 *.bak
-*.ptrace
-*.plog
+*TSMC*

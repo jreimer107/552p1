@@ -1,0 +1,76 @@
+Cycle:           7 REG:  0 VALUE: 0x0000
+Cycle:           8 REG:  0 VALUE: 0x0000
+Cycle:           9 REG:  0 VALUE: 0x0000
+Cycle:          10 REG:  0 VALUE: 0x0000
+Cycle:          11 REG:  0 VALUE: 0x0000
+Cycle:          12 REG:  0 VALUE: 0x0000
+Cycle:          13 REG:  0 VALUE: 0x0000
+Cycle:          14 REG:  0 VALUE: 0x0000
+Cycle:          15 REG:  0 VALUE: 0x0000
+Cycle:          16 REG:  0 VALUE: 0x0000
+Cycle:          17 REG:  0 VALUE: 0x0000
+Cycle:          18 REG:  0 VALUE: 0x0000
+Cycle:          19 REG:  0 VALUE: 0x0000
+Cycle:          20 REG:  0 VALUE: 0x0000
+Cycle:          21 REG:  1 VALUE: 0x0051
+Cycle:          22 REG:  1 VALUE: 0x5151
+Cycle:          23 REG:  2 VALUE: 0x00b0
+Cycle:          24 REG:  2 VALUE: 0x00b0
+Cycle:          25 REG:  3 VALUE: 0x0004
+Cycle:          26 REG:  3 VALUE: 0x0004
+Cycle:          26 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          27 REG:  3 VALUE: 0x0004
+Cycle:          27 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          28 REG:  3 VALUE: 0x0004
+Cycle:          28 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          29 REG:  3 VALUE: 0x0004
+Cycle:          29 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          30 REG:  3 VALUE: 0x0004
+Cycle:          30 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          31 REG:  3 VALUE: 0x0004
+Cycle:          31 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          32 REG:  3 VALUE: 0x0004
+Cycle:          32 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          33 REG:  3 VALUE: 0x0004
+Cycle:          33 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          34 REG:  3 VALUE: 0x0004
+Cycle:          34 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          35 REG:  3 VALUE: 0x0004
+Cycle:          35 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          36 REG:  3 VALUE: 0x0004
+Cycle:          36 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          37 REG:  3 VALUE: 0x0004
+Cycle:          37 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          38 REG:  3 VALUE: 0x0004
+Cycle:          38 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          39 REG:  3 VALUE: 0x0004
+Cycle:          39 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          40 REG:  3 VALUE: 0x0004
+Cycle:          40 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          41 REG:  3 VALUE: 0x0004
+Cycle:          41 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          42 REG:  3 VALUE: 0x0004
+Cycle:          42 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          43 REG:  3 VALUE: 0x0004
+Cycle:          43 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          44 REG:  3 VALUE: 0x0004
+Cycle:          44 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          45 REG:  3 VALUE: 0x0004
+Cycle:          45 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          46 REG:  3 VALUE: 0x0004
+Cycle:          46 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          47 REG:  3 VALUE: 0x0004
+Cycle:          47 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          48 REG:  3 VALUE: 0x0004
+Cycle:          48 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          49 REG:  3 VALUE: 0x0004
+Cycle:          49 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          50 REG:  3 VALUE: 0x0004
+Cycle:          50 STORE: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          52 REG:  5 VALUE: 0x00b4
+Cycle:          53 REG:  0 VALUE: 0x0000
+Cycle:          53 LOAD: ADDR: 0x00b4 VALUE: 0x5151
+Cycle:          54 REG:  4 VALUE: 0x5151
+Cycle:          55 REG:  0 VALUE: 0x0000
+Cycle:          56 REG:  5 VALUE: 0x5101
+Cycle:          57 REG:  5 VALUE: 0x000e
